@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ticketing.Domain.Entities
 {
-    public class EVENT
+    public class Event
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
@@ -14,6 +14,6 @@ namespace Ticketing.Domain.Entities
         public string Venue { get; set; } = string.Empty;
         public string Status { get; set; } = "Active";
 
-        public ICollection<SECTOR> Sectors { get; set; } = [];
+        public ICollection<Sector> Sectors { get; set; } = [];
     }
 }

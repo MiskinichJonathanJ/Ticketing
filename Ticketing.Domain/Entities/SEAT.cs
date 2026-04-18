@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ticketing.Domain.Entities
 {
-    public class SEAT
+    public class Seat
     {
         public Guid Id { get; set; }
         public int SectorId { get; set; }
@@ -15,7 +15,7 @@ namespace Ticketing.Domain.Entities
         public string Status { get; set; } = "Available";
         public int Version { get; set; } = 0;
 
-        public SECTOR Sector { get; set; } = null!;
+        public Sector Sector { get; set; } = null!;
 
         // public RESERVATION? Reservation { get; set; }
 

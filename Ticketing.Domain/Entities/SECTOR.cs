@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ticketing.Domain.Entities
 {
-    public class SECTOR
+    public class Sector
     {
         public int Id { get; set; }
         public int EventId { get; set; }
@@ -14,8 +14,8 @@ namespace Ticketing.Domain.Entities
         public decimal Price { get; set; }
         public int Capacity { get; set; }
 
-        public EVENT Event { get; set; } = null!;
+        public Event Event { get; set; } = null!;
 
-        public ICollection<SEAT> Seats { get; set; } = [];
+        public ICollection<Seat> Seats { get; set; } = [];
     }
 }
