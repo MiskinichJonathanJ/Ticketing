@@ -17,8 +17,7 @@ namespace Ticketing.Domain.Entities
 
         public Sector Sector { get; set; } = null!;
 
-        public Reservation? Reservation { get; set; }
-
+        // public RESERVATION? Reservation { get; set; }
 
     }
 }
