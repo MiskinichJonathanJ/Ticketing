@@ -11,7 +11,7 @@ namespace Ticketing.Domain.Entities
         public Guid Id { get; set; }
         public int UserId { get; set; }
         public Guid SeatId { get; set; }
-        public string Status { get; set; }
+        public string Status { get; set; } = string.Empty;
         public DateTime ReservedAt { get; set; }
         public DateTime ExpireAt { get; set; }
 
