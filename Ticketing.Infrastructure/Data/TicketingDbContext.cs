@@ -14,13 +14,10 @@ namespace Ticketing.Infrastructure.Data
         public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<Seat> Seats { get; set; } 
 
-        // TODO: Considerar añadir DbSets para Event y Sector una vez que se creen sus entidades correspondientes en Ticketing.Domain.Entities
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configuraciòn para User
             modelBuilder.Entity<User>()
                 .HasMany(u => u.Reservations)
                 .WithOne(r => r.User)
@@ -31,9 +28,8 @@ namespace Ticketing.Infrastructure.Data
                 .HasMany(u => u.AuditLogs)
                 .WithOne(a => a.User)
                 .HasForeignKey(a => a.UserId)
-                .IsRequired(false); // UserId es opcional en AuditLog
+                .IsRequired(false);
 
-            // Configuraciòn para Reservation
             modelBuilder.Entity<Reservation>()
                 .HasOne(r => r.User)
                 .WithMany(u => u.Reservations)
@@ -42,23 +38,15 @@ namespace Ticketing.Infrastructure.Data
 
             modelBuilder.Entity<Reservation>()
                 .HasOne(r => r.Seat)
-                .WithMany() // Asumimos que un Seat puede tener muchas Reservations históricamente, pero solo una activa
+                .WithMany()
                 .HasForeignKey(r => r.SeatId)
                 .IsRequired();
 
-            // Configuraciòn para AuditLog
             modelBuilder.Entity<AuditLog>()
                 .HasOne(a => a.User)
                 .WithMany(u => u.AuditLogs)
                 .HasForeignKey(a => a.UserId)
-                .IsRequired(false); // UserId es opcional
-
-            // Configuraciòn para Seat (si fuera necesario, aquí iría la configuraciòn de Seat una vez creada)
-            // Por ejemplo, si Seat tuviera una relaciòn con Sector:
-            // modelBuilder.Entity<Seat>()
-            //     .HasOne(s => s.Sector)
-            //     .WithMany(s => s.Seats)
-            //     .HasForeignKey(s => s.SectorId);
+                .IsRequired(false); 
         }
     }
 }
