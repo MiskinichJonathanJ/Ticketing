@@ -9,7 +9,7 @@ namespace Ticketing.Infrastructure.Data.Repositories
         private readonly TicketingDbContext _context = context;
 
         public async Task AddAsync(Event ev)
-        {
+    {
             await _context.EVENT.AddAsync(ev);
         }
 
