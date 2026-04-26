@@ -4,18 +4,27 @@ using Ticketing.Domain.Entities;
 
 namespace Ticketing.Infrastructure.Data.Repositories
 {
-    public class EventRepository(DbContext context) : IEventRepository
+    public class EventRepository(TicketingDbContext context) : IEventRepository
     {
-        private readonly DbContext _context = context;
+        private readonly TicketingDbContext _context = context;
 
-        public Task<IEnumerable<Event>> GetAllAsync()
+        public async Task AddAsync(Event ev)
         {
-            throw new NotImplementedException();
+            await _context.EVENT.AddAsync(ev);
         }
 
-        public Task<Event?> GetByIdWithSectorsAsync(int id)
+        public async Task<IEnumerable<Event>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.EVENT.ToListAsync(); ;
         }
+
+        public async Task<Event?> GetByIdWithSectorsAsync(int id)
+        {
+            return await _context.EVENT
+            .Include(e => e.Sectors)
+            .FirstOrDefaultAsync(e => e.Id == id);
+        }
+
+
     }
 }

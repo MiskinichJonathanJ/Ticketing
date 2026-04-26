@@ -1,21 +1,25 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Ticketing.Application.Interfaces;
 using Ticketing.Domain.Entities;
+using Ticketing.Domain.Enums;
 
 namespace Ticketing.Infrastructure.Data.Repositories
 {
-    public class ReservationRepository(DbContext context) : IReservationRepository
+    public class ReservationRepository(TicketingDbContext context) : IReservationRepository
     {
-        private readonly DbContext _context = context;
+        private readonly TicketingDbContext _context = context;
 
-        public Task AddAsync(Reservation reservation)
+        public async Task AddAsync(Reservation reservation)
         {
-            throw new NotImplementedException();
+            await _context.RESERVATION.AddAsync(reservation);
         }
 
-        public Task SaveChangesAsync()
+        public async Task<bool> ExistsActiveReservation(Guid seatId)
         {
-            throw new NotImplementedException();
+            return await _context.RESERVATION
+            .AnyAsync(r => r.SeatId == seatId
+                        && r.Status == ReservationStatus.Pending
+                        && r.ExpireAt > DateTime.UtcNow);
         }
     }
 }

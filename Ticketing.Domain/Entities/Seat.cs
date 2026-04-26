@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ticketing.Domain.Enums;
 
 namespace Ticketing.Domain.Entities
 {
@@ -12,7 +13,7 @@ namespace Ticketing.Domain.Entities
         public int SectorId { get; set; }
         public string RowIdentifier { get; set; } = string.Empty;
         public int SeatNumber { get; set; }
-        public string Status { get; set; } = "Available";
+        public SeatStatus Status { get; set; };
         public int Version { get; set; } = 0;
 
         public Sector Sector { get; set; } = null!;

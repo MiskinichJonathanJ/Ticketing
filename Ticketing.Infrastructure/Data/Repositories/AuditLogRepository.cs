@@ -4,12 +4,13 @@ using Ticketing.Domain.Entities;
 
 namespace Ticketing.Infrastructure.Data.Repositories
 {
-    public class AuditLogRepository(DbContext context) : IAuditLogRepository
+    public class AuditLogRepository(TicketingDbContext context) : IAuditLogRepository
     {
-        private readonly DbContext _context = context;
-        public Task AddAuditLogAsync(AuditLog log)
+        private readonly TicketingDbContext _context = context;
+        public async Task AddAuditLogAsync(AuditLog log)
         {
-            throw new NotImplementedException();
+            await _context.AddAsync(log);
+            await _context.SaveChangesAsync();
         }
     }
 }

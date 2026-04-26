@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ticketing.Domain.Enums;
 
 namespace Ticketing.Domain.Entities
 {
@@ -11,7 +12,7 @@ namespace Ticketing.Domain.Entities
         public Guid Id { get; set; }
         public int UserId { get; set; }
         public Guid SeatId { get; set; }
-        public string Status { get; set; } = string.Empty;
+        public ReservationStatus Status { get; set; }
         public DateTime ReservedAt { get; set; }
         public DateTime ExpireAt { get; set; }
 

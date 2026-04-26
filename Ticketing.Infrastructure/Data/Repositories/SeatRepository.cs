@@ -4,22 +4,22 @@ using Ticketing.Domain.Entities;
 
 namespace Ticketing.Infrastructure.Data.Repositories
 {
-    public class SeatRepository(DbContext context) : ISeatRepository
+    public class SeatRepository(TicketingDbContext context) : ISeatRepository
     {
-        private readonly DbContext _context = context;
-        public Task<Seat?> GetByIdAsync(Guid id)
+        private readonly TicketingDbContext _context = context;
+        public async Task<Seat?> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return await _context.SEAT.FirstOrDefaultAsync(s => s.Id == id);
         }
 
-        public Task<IEnumerable<Seat>> GetBySectorIdAsync(int sectorId)
+        public async Task<IEnumerable<Seat>> GetBySectorIdAsync(int sectorId)
         {
-            throw new NotImplementedException();
+            return await _context.SEAT.Where(s => s.SectorId == sectorId).ToListAsync();
         }
 
-        public Task<bool> UpdateAsync(Seat seat)
+        public void Update(Seat seat)
         {
-            throw new NotImplementedException();
+            _context.SEAT.Update(seat);
         }
     }
 }

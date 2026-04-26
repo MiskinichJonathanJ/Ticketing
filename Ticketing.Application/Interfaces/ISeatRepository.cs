@@ -6,7 +6,6 @@ namespace Ticketing.Application.Interfaces
     {
         Task<IEnumerable<Seat>> GetBySectorIdAsync(int sectorId);
         Task<Seat?> GetByIdAsync(Guid id);
-        // Devuelve true si la actualización fue exitosa (manejo de concurrencia)
-        Task<bool> UpdateAsync(Seat seat);
+        void Update(Seat seat);
     }
 }

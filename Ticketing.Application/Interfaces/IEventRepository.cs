@@ -6,5 +6,6 @@ namespace Ticketing.Application.Interfaces
     {
         Task<IEnumerable<Event>> GetAllAsync();
         Task<Event?> GetByIdWithSectorsAsync(int id);
+        Task AddAsync(Event ev);
     }
 }
