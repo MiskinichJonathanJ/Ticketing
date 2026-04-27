@@ -6,7 +6,9 @@ namespace Ticketing.Application.Mappings
     {
         public SeatProfile()
         {
-            CreateMap<Domain.Entities.Seat, DTOs.SeatDto>();
+            CreateMap<Domain.Entities.Seat, DTOs.SeatDto>()
+            .ForMember(dest => dest.SectorName, opt => opt.MapFrom(src => src.Sector.Name))
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Sector.Price));
         }
     }
 }
