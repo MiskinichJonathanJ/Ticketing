@@ -21,5 +21,13 @@ namespace Ticketing.Infrastructure.Data.Repositories
         {
             _context.SEAT.Update(seat);
         }
+
+        public async Task<IEnumerable<Seat>> GetByEventIdAsync(int eventId)
+        {
+            return await _context.SEAT
+                .Include(s => s.Sector)
+                .Where(s => s.Sector.EventId == eventId)
+                .ToListAsync();
+        }
     }
 }

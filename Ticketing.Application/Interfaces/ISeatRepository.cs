@@ -7,5 +7,6 @@ namespace Ticketing.Application.Interfaces
         Task<IEnumerable<Seat>> GetBySectorIdAsync(int sectorId);
         Task<Seat?> GetByIdAsync(Guid id);
         void Update(Seat seat);
+        Task<IEnumerable<Seat>> GetByEventIdAsync(int eventId);
     }
 }
