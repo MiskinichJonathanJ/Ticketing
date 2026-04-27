@@ -7,6 +7,6 @@
         public DateTime EventDate { get; set; }
         public string Venue { get; set; } = null!;
         public string Status { get; set; } = null!;
-        public List<SectorDto> Sectors { get; set; } = new();
+        
     }
 }
