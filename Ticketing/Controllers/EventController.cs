@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Ticketing.Application.DTOs;
 using Ticketing.Application.UseCases.Events.Queries.GetAllEvents;
 using Ticketing.Application.UseCases.Seats.Queries.GetSeatsByEvent;
+using Ticketing.Application.UseCases.Sectors.Queries.GetSectorsByEvent;
 
 
 
@@ -37,11 +38,12 @@ namespace Ticketing.Controllers
             return Ok(seats);
         }
 
+        // GET /api/v1/events/{id}/sectors
         [HttpGet("{id}/sectors")]
-        public async Task<IEnumerable<SectorDto>> GetEventSectors(int id)
+        public async Task<IActionResult> GetEventSectors(int id)
         {
-            throw new NotImplementedException();
+            var sectors = await _mediator.Send(new GetSectorsByEventQuery { EventId = id });
+            return Ok(sectors);
         }
-                
     }
 }
