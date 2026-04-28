@@ -95,6 +95,8 @@ namespace Ticketing.Application.UseCases.Reservation.Commands.ReserveSeat
             catch (Exception)
             {
                 await _unitOfWork.RollbackAsync(cancellationToken);
+
+                await LogAudit(request, "RESERVE_FAILED_EXCEPTION", cancellationToken);
                 throw;
             }
 

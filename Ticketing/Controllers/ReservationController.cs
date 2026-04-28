@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Ticketing.Application.UseCases.Reservation.Commands;
+using Ticketing.Application.UseCases.Reservation.Commands.ReserveSeat;
 
 namespace Ticketing.Controllers
 {
