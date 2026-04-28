@@ -3,7 +3,6 @@ using MediatR;
 using Ticketing.Application.DTOs;
 using Ticketing.Application.Interfaces;
 
-namespace Ticketing.Application.UseCases.Events.Handlers
 namespace Ticketing.Application.UseCases.Seats.Queries.GetSeatsByEvent
 {
     public class GetEventSeatsHandler : IRequestHandler<GetEventSeatsQuery, List<SeatDto>>
