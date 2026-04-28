@@ -2,11 +2,10 @@
 using MediatR;
 using Ticketing.Application.DTOs;
 using Ticketing.Application.Interfaces;
-using Ticketing.Application.UseCases.Reservation.Commands;
 using Ticketing.Domain.Entities;
 using Ticketing.Domain.Enums;
 
-namespace Ticketing.Application.UseCases.Reservation.Handlers
+namespace Ticketing.Application.UseCases.Reservation.Commands.ReserveSeat
 {
     public class ReserveSeatHandler : IRequestHandler<ReserveSeatCommand, ReservationDto>
     {

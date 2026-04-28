@@ -2,7 +2,7 @@
 using MediatR;
 using Ticketing.Application.DTOs;
 using Ticketing.Application.Interfaces;
-using Ticketing.Application.UseCases.Events.Queries;
+using Ticketing.Application.UseCases.Events.Queries.GetAllEvents;
 
 namespace Ticketing.Application.UseCases.Events.Handlers
 {
@@ -22,9 +22,9 @@ namespace Ticketing.Application.UseCases.Events.Handlers
 
         public async Task<List<EventDto>> Handle(GetEventsQuery request, CancellationToken cancellationToken)
         {
-            var events = await _eventRepository.GetAllAsync(); // trae todos los eventos de la DB
+            var events = await _eventRepository.GetAllAsync(); 
 
-            return _mapper.Map<List<EventDto>>(events); // convierte de entidad a DTO usando AutoMapper
+            return _mapper.Map<List<EventDto>>(events); 
         }
     }
 }

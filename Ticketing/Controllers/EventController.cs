@@ -2,12 +2,16 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Ticketing.Application.DTOs;
+using Ticketing.Application.UseCases.Events.Queries.GetAllEvents;
+using Ticketing.Application.UseCases.Seats.Queries.GetSeatsByEvent;
+
+
 
 namespace Ticketing.Controllers
 {
-    [Route("api/v1/[controller]")]
+    [Route("api/v1/events")]
     [ApiController]
-    public class EventController : Controller
+    public class EventController : ControllerBase
     {
         private readonly IMediator _mediator;
 
@@ -16,16 +20,21 @@ namespace Ticketing.Controllers
             _mediator = mediator;
         }
 
+        // GET /api/v1/events
         [HttpGet]
-        public async Task<IEnumerable<EventDto>> GetAllEvents()
+        public async Task<IActionResult> GetAllEvents()
         {
-            throw new NotImplementedException();
+            var events = await _mediator.Send(new GetEventsQuery());
+            return Ok(events);
         }
 
-        [HttpGet("{id}")]
-        public async Task<EventDto> GetEventById(int id)
+
+        // GET /api/v1/events/{id}/seats
+        [HttpGet("{id}/seats")]
+        public async Task<IActionResult> GetEventSeats(int id)
         {
-            throw new NotImplementedException();
+            var seats = await _mediator.Send(new GetEventSeatsQuery { EventId = id });
+            return Ok(seats);
         }
 
         [HttpGet("{id}/sectors")]
@@ -33,11 +42,6 @@ namespace Ticketing.Controllers
         {
             throw new NotImplementedException();
         }
-
-        [HttpGet("{id}/seats")]
-        public async Task<IEnumerable<SeatDto>> GetEventSeats(int id)
-        {
-            throw new NotImplementedException();
-        }
+                
     }
 }
