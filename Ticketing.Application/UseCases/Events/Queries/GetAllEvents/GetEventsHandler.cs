@@ -2,9 +2,8 @@
 using MediatR;
 using Ticketing.Application.DTOs;
 using Ticketing.Application.Interfaces;
-using Ticketing.Application.UseCases.Events.Queries.GetAllEvents;
 
-namespace Ticketing.Application.UseCases.Events.Handlers
+namespace Ticketing.Application.UseCases.Events.Queries.GetAllEvents
 {
     public class GetEventsHandler : IRequestHandler<GetEventsQuery, List<EventDto>>
     {

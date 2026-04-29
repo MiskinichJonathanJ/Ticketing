@@ -6,11 +6,7 @@
 
   <ItemGroup>
     <Folder Include="UseCases\Events\Commands\" />
-    <Folder Include="UseCases\Reservation\Handlers\" />
     <Folder Include="UseCases\Reservation\Querys\" />
-    <Folder Include="UseCases\Seats\Commands\" />
-    <Folder Include="UseCases\Seats\Handlers\" />
-    <Folder Include="UseCases\Seats\Querys\" />
   </ItemGroup>
 
   <ItemGroup>
