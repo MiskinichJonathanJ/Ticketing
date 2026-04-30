@@ -1,17 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using System;
+﻿using Microsoft.EntityFrameworkCore.Storage;
 using Ticketing.Application.Interfaces;
+using Ticketing.Infrastructure.Data;
 
-public class UnitOfWork : IUnitOfWork
+public class UnitOfWork(TicketingDbContext context) : IUnitOfWork
 {
-    private readonly DbContext _context;
+    private readonly TicketingDbContext _context = context;
     private IDbContextTransaction? _transaction;
-
-    public UnitOfWork(DbContext context)
-    {
-        _context = context;
-    }
 
     public async Task BeginTransactionAsync(CancellationToken cancellationToken)
     {
