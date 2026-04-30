@@ -13,7 +13,7 @@ namespace Ticketing.Domain.Entities
         public int SectorId { get; set; }
         public string RowIdentifier { get; set; } = string.Empty;
         public int SeatNumber { get; set; }
-        public SeatStatus Status { get; set; };
+        public SeatStatus Status { get; set; }
         public int Version { get; set; } = 0;
 
         public Sector Sector { get; set; } = null!;

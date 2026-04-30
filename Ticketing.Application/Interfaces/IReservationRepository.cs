@@ -5,6 +5,6 @@ namespace Ticketing.Application.Interfaces
     public interface IReservationRepository
     {
         Task AddAsync(Reservation reservation);
-        Task<bool> ExistsActiveReservation(Guid seatId)
+        Task<bool> ExistsActiveReservation(Guid seatId);
     }
 }
