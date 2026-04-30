@@ -1,80 +1,53 @@
-﻿import { BASE_URL, MESSAGES } from './constants.js';
+﻿import { BASE_URL } from './constants.js';
 
+// ══════════════════════════════════════════════
+// MODO MOCK — datos falsos hasta que el back esté listo
+// Cambiar a false cuando el backend esté funcionando
+const USE_MOCK = true;
+// ══════════════════════════════════════════════
 
-const USE_MOCKS = true;
-
-// Datos falsos
-const mockEvents = [
-    {
-        id: 1,
-        name: "Concierto de Rock",
-        eventDate: "2026-05-10T20:00:00",
-        venue: "Estadio River Plate",
-        status: "Activo"
-    },
-    {
-        id: 2,
-        name: "Obra de Teatro",
-        eventDate: "2026-05-15T21:00:00",
-        venue: "Teatro Colon",
-        status: "Disponible"
-    }
-];
-
-const mockSectors = {
-    1: [
-        {
-            id: 1,
-            name: "VIP",
-            price: 8000,
-            capacity: 50
-        },
-        {
-            id: 2,
-            name: "General",
-            price: 4000,
-            capacity: 100
-        }
-    ],
-    2: [
-        {
-            id: 3,
-            name: "Platea",
-            price: 6000,
-            capacity: 100
-        }
-    ]
-};
-
-const mockSeats = {
-    1: generateSeats("VIP"),
-    2: generateSeats("Platea")
-};
-
-function generateSeats(sectorName) {
+// Genera 50 butacas por sector con algunos estados variados
+function generateSeats(sectorName, sectorId) {
     const seats = [];
-    const rows = ["A", "B", "C", "D", "E"]; // 5 filas
-    let id = 1;
-
-    rows.forEach(row => {
-        for (let i = 1; i <= 10; i++) { // 10 por fila → 50 total
-            seats.push({
-                id: id++,
-                sectorName,
-                rowIdentifier: row,
-                seatNumber: i,
-                status: "AVAILABLE"
-            });
-        }
-    });
-
+    for (let i = 1; i <= 50; i++) {
+        const row = `F${Math.ceil(i / 10)}`;
+        let status = 'Available';
+        if ([3, 15, 27, 38, 44].includes(i)) status = 'Reserved';
+        if ([7, 19, 31, 42, 48].includes(i)) status = 'Sold';
+        seats.push({
+            id: `${sectorId}-seat-${i}`,
+            sectorName,
+            rowIdentifier: row,
+            seatNumber: i,
+            status,
+            price: sectorId === 1 ? 55000 : 110000
+        });
+    }
     return seats;
 }
 
+const MOCK_DATA = {
+    events: [
+        {
+            id: 1,
+            name: "Airbag - El Club de la Pelea II",
+            eventDate: "2026-05-23T21:00:00",
+            venue: "Estadio José Amalfitani",
+            status: "Active"
+        }
+    ],
+    sectors: [
+        { id: 1, eventId: 1, name: "Campo", price: 55000, capacity: 50 },
+        { id: 2, eventId: 1, name: "Platea", price: 110000, capacity: 50 }
+    ],
+    seats: [
+        ...generateSeats("Campo", 1),
+        ...generateSeats("Platea", 2)
+    ]
+};
 
+// ── API Config ──────────────────────────────────────────────
 
-
-// Configuración de la API
 export const API_CONFIG = {
     BASE_URL,
     ENDPOINTS: {
@@ -87,12 +60,10 @@ export const API_CONFIG = {
     }
 };
 
-// Construye la URL completa
 export function buildApiUrl(endpoint, params = '') {
     return `${API_CONFIG.BASE_URL}${endpoint}${params}`;
 }
 
-// Error personalizado con código HTTP
 class ApiError extends Error {
     constructor(status, message) {
         super(message);
@@ -101,7 +72,6 @@ class ApiError extends Error {
     }
 }
 
-// Extrae el mensaje de error de la respuesta
 async function getErrorMessage(response) {
     try {
         const data = await response.json();
@@ -111,32 +81,15 @@ async function getErrorMessage(response) {
     }
 }
 
-// Normaliza cualquier error en un formato consistente
 function normalizeError(error) {
-    if (error.name === 'AbortError') {
-        return new Error('La petición tardó demasiado tiempo');
-    }
-    if (error instanceof ApiError) {
-        return error;
-    }
-    return new Error(error.message || MESSAGES.CONNECTION_ERROR);
+    if (error.name === 'AbortError') return new Error('La petición tardó demasiado');
+    if (error instanceof ApiError) return error;
+    return new Error(error.message || 'Error de conexión');
 }
 
-// Reintenta la petición con espera exponencial
-async function retryWithBackoff(fn, retries = 3, delay = 500) {
-    try {
-        return await fn();
-    } catch (error) {
-        if (retries <= 0) throw error;
-        await new Promise(res => setTimeout(res, delay));
-        return retryWithBackoff(fn, retries - 1, delay * 2);
-    }
-}
-
-// Fetch con timeout
 async function fetchWithTimeout(url, config) {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), config.timeout);
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
     try {
         const response = await fetch(url, {
             ...config,
@@ -155,52 +108,50 @@ async function fetchWithTimeout(url, config) {
     }
 }
 
-// Función base para todos los requests
+async function retryWithBackoff(fn, retries = 3, delay = 500) {
+    try {
+        return await fn();
+    } catch (error) {
+        if (retries <= 0) throw error;
+        await new Promise(res => setTimeout(res, delay));
+        return retryWithBackoff(fn, retries - 1, delay * 2);
+    }
+}
+
 export const apiRequest = async (url, options = {}) => {
-    const config = {
-        timeout: 10000,
-        retries: 3,
-        retryDelay: 1000,
-        ...options
-    };
-    return retryWithBackoff(
-        () => fetchWithTimeout(url, config),
-        config.retries,
-        config.retryDelay
-    );
+    const config = { timeout: 10000, retries: 3, retryDelay: 1000, ...options };
+    return retryWithBackoff(() => fetchWithTimeout(url, config), config.retries, config.retryDelay);
 };
 
+// ── Endpoints ───────────────────────────────────────────────
+
 export async function getEvents() {
-    if (USE_MOCKS) {
-        return Promise.resolve(mockEvents);
-    }
+    if (USE_MOCK) return MOCK_DATA.events;
     return apiRequest(buildApiUrl(API_CONFIG.ENDPOINTS.EVENTS));
 }
 
 export async function getSectors(eventId) {
-    if (USE_MOCKS) {
-        return Promise.resolve(mockSectors[eventId] || []);
-    }
+    if (USE_MOCK) return MOCK_DATA.sectors.filter(s => s.eventId === eventId);
     return apiRequest(buildApiUrl(API_CONFIG.ENDPOINTS.EVENTS, `/${eventId}/sectors`));
 }
 
 export async function getSeats(eventId) {
-    if (USE_MOCKS) {
-        return Promise.resolve(mockSeats[eventId] || []);
-    }
+    if (USE_MOCK) return MOCK_DATA.seats;
     return apiRequest(buildApiUrl(API_CONFIG.ENDPOINTS.EVENTS, `/${eventId}/seats`));
 }
 
 export async function reserveSeat(seatId, userId) {
-    if (USE_MOCKS) {
-        return Promise.resolve({
-            success: true,
-            message: "Reserva simulada OK",
+    if (USE_MOCK) {
+        // Simulamos respuesta exitosa
+        return {
+            id: `res-${Date.now()}`,
             seatId,
-            userId
-        });
+            userId,
+            status: 'Pending',
+            reservedAt: new Date().toISOString(),
+            expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString()
+        };
     }
-
     return apiRequest(buildApiUrl(API_CONFIG.ENDPOINTS.RESERVATIONS), {
         method: 'POST',
         body: JSON.stringify({ seatId, userId })

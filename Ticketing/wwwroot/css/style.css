@@ -2,16 +2,16 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background: #f3f4f6;
     color: #111827;
 }
 
-/* Navbar */
-.navbar {
+/* ── Navbar ── */
+.nav {
     background: #fff;
     border-bottom: 0.5px solid #e5e7eb;
     padding: 12px 20px;
@@ -21,36 +21,35 @@ body {
 }
 
 .brand {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 500;
-    color: #111827;
 }
 
     .brand span {
-        color: #2563eb;
+        color: #1d4ed8;
     }
 
-.user-badge {
-    font-size: 12px;
+.user-pill {
+    font-size: 11px;
     color: #6b7280;
     background: #f9fafb;
     border: 0.5px solid #e5e7eb;
-    padding: 4px 10px;
-    border-radius: 8px;
+    padding: 3px 10px;
+    border-radius: 20px;
 }
 
-/* Alertas  */
+/* ── Alert ── */
 .alert {
-    margin: 12px 20px 0;
-    padding: 10px 14px;
+    padding: 8px 14px;
     border-radius: 8px;
-    font-size: 13px;
+    font-size: 12px;
+    margin: 10px 20px 0;
     display: none;
 }
 
     .alert.success {
-        background: #eaf3de;
-        color: #3b6d11;
+        background: #e6f1fb;
+        color: #0c447c;
         display: block;
     }
 
@@ -66,9 +65,8 @@ body {
         display: block;
     }
 
-/*  Secciones */
+/* ── Sections ── */
 .section {
-    padding: 20px;
     display: none;
 }
 
@@ -76,42 +74,28 @@ body {
         display: block;
     }
 
-.page-title {
-    font-size: 18px;
+/* ── Events ── */
+.events-wrap {
+    padding: 20px;
+}
+
+.pg-title {
+    font-size: 17px;
     font-weight: 500;
-    color: #111827;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
 }
 
-.page-sub {
-    font-size: 13px;
+.pg-sub {
+    font-size: 12px;
     color: #6b7280;
     margin-bottom: 16px;
 }
 
-.back-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    color: #6b7280;
-    cursor: pointer;
-    margin-bottom: 16px;
-    background: none;
-    border: none;
-    font-family: inherit;
-}
-
-    .back-btn:hover {
-        color: #111827;
-    }
-
-/* Eventos */
 .event-card {
     background: #fff;
     border: 0.5px solid #e5e7eb;
     border-radius: 12px;
-    padding: 16px;
+    padding: 14px 16px;
     margin-bottom: 10px;
     display: flex;
     align-items: center;
@@ -119,275 +103,269 @@ body {
 }
 
 .event-name {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 500;
-    color: #111827;
 }
 
 .event-meta {
-    font-size: 12px;
+    font-size: 11px;
     color: #6b7280;
-    margin-top: 4px;
+    margin-top: 3px;
 }
 
 .badge-active {
     background: #e6f1fb;
-    color: #185fa5;
-    font-size: 11px;
-    padding: 3px 8px;
+    color: #0c447c;
+    font-size: 10px;
+    padding: 2px 8px;
     border-radius: 20px;
     display: inline-block;
-    margin-top: 6px;
+    margin-top: 5px;
 }
 
-/* Botones  */
 .btn-primary {
-    background: #2563eb;
+    background: #1d4ed8;
     color: #fff;
     border: none;
     border-radius: 8px;
     padding: 8px 16px;
-    font-size: 13px;
+    font-size: 12px;
     cursor: pointer;
-    font-family: inherit;
 }
 
     .btn-primary:hover {
-        background: #1d4ed8;
+        background: #1e40af;
     }
 
-.btn-secondary {
-    background: #fff;
-    color: #374151;
-    border: 0.5px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 10px;
-    font-size: 13px;
-    cursor: pointer;
-    width: 100%;
-    font-family: inherit;
-}
-
-    .btn-secondary:hover {
-        background: #f9fafb;
-    }
-
-/*  Event bar */
+/* ── Seats section ── */
 .event-bar {
     background: #fff;
-    border: 0.5px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 12px 16px;
+    border-bottom: 0.5px solid #e5e7eb;
+    padding: 10px 20px;
     display: flex;
     gap: 24px;
-    margin-bottom: 16px;
     flex-wrap: wrap;
 }
 
-.bar-item-label {
-    font-size: 11px;
+.bi-label {
+    font-size: 10px;
     color: #6b7280;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
-.bar-item-value {
-    font-size: 13px;
+.bi-value {
+    font-size: 12px;
     font-weight: 500;
-    color: #111827;
-    margin-top: 2px;
+    margin-top: 1px;
 }
 
-/* Sectores  */
+.back-btn {
+    background: none;
+    border: none;
+    font-size: 12px;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 10px 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+    .back-btn:hover {
+        color: #111827;
+    }
+
+.seats-content {
+    padding: 16px 20px;
+}
+
+/* ── Sector cards ── */
+.sector-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
 .sector-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 10px;
+    margin-bottom: 20px;
 }
 
 .sector-card {
     background: #fff;
     border: 0.5px solid #e5e7eb;
     border-radius: 12px;
-    padding: 16px;
+    padding: 14px;
     cursor: pointer;
-    transition: border-color 0.15s;
+    transition: all 0.2s;
 }
 
     .sector-card:hover {
-        border-color: #2563eb;
+        border-color: #1d4ed8;
     }
 
-.sector-name {
-    font-size: 14px;
+    .sector-card.active {
+        border-color: #1d4ed8;
+        background: #eff6ff;
+    }
+
+    .sector-card.pulse {
+        transform: scale(1.03);
+    }
+
+.sname {
+    font-size: 13px;
     font-weight: 500;
-    color: #111827;
 }
 
-.sector-price {
-    font-size: 20px;
+.sprice {
+    font-size: 18px;
     font-weight: 500;
-    color: #2563eb;
-    margin-top: 4px;
+    color: #1d4ed8;
+    margin-top: 3px;
 }
 
-.sector-cap {
-    font-size: 12px;
+.scap {
+    font-size: 11px;
     color: #6b7280;
     margin-top: 2px;
 }
 
-
-
-
-/* =========================
-   🎬 SEAT MAP (ESTILO CINE)
-   ========================= */
-
-.seat-main {
-    display: grid;
-    grid-template-columns: 1fr 240px;
-    gap: 20px;
+/* ── Map ── */
+.map-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 4px;
 }
 
-/* Área principal */
-.seat-area {
-    background: #fff;
-    border: 0.5px solid #e5e7eb;
-    border-radius: 16px;
-    padding: 20px;
-}
-
-/* Pantalla curva */
-.stage {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.stage-line {
-    width: 70%;
-    margin: 0 auto 6px;
-    height: 6px;
-    background: #d1d5db;
-    border-radius: 999px;
-}
-
-.stage-label {
-    font-size: 11px;
-    color: #6b7280;
-    letter-spacing: 0.15em;
-}
-
-/* Filas */
-.rows {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    align-items: center;
-}
-
-/* Cada fila */
-.row {
-    display: flex;
-    align-items: center;
-}
-
-/* Letra fila */
-.row-label {
-    width: 20px;
+.map-sub {
     font-size: 12px;
     color: #6b7280;
+    margin-bottom: 12px;
+}
+
+.map-layout {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    gap: 16px;
+}
+
+.map-area {
+    background: #fff;
+    border: 0.5px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+    .map-area.loading {
+        opacity: 0;
+        transform: scale(0.97);
+    }
+
+.stage-wrap {
     text-align: center;
+    margin-bottom: 14px;
 }
 
-/* Contenedor de asientos */
-.seats-row {
+.stage-arc {
+    width: 55%;
+    margin: 0 auto;
+    height: 6px;
+    border: 2px solid #d1d5db;
+    border-bottom: none;
+    border-radius: 80px 80px 0 0;
+}
+
+.stage-txt {
+    font-size: 10px;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+}
+
+.grid-rows {
     display: flex;
-    justify-content: center;
-    gap: 6px;
+    flex-direction: column;
+    gap: 5px;
 }
 
-/* Asientos */
-.seat {
+.grow {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.rlabel {
+    font-size: 10px;
+    color: #9ca3af;
+    width: 20px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.grow-seats {
+    display: flex;
+    gap: 3px;
+    flex: 1;
+    justify-content: center;
+}
+
+.aisle {
+    width: 12px;
+    flex-shrink: 0;
+}
+
+.seat-btn {
     width: 26px;
     height: 26px;
-    border-radius: 6px;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s;
+    flex-shrink: 0;
+    transition: transform 0.15s;
+    padding: 3px;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-    /* Hover */
-    .seat:hover:not(:disabled) {
+    .seat-btn:hover:not(:disabled) {
         transform: scale(1.2);
-        box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
     }
 
-    /* 🔵 Disponible */
-    .seat.available {
-        background: #2563eb;
-    }
-
-    /* 🔷 Seleccionado */
-    .seat.selected {
-        background: #38bdf8;
-    }
-
-    /* 🟡 Reservado */
-    .seat.reserved {
-        background: #f59e0b;
+    .seat-btn:disabled {
         cursor: not-allowed;
     }
 
-    /* ⚪ Ocupado */
-    .seat.occupied {
-        background: #e5e7eb;
-        cursor: not-allowed;
-    }
-
-/* Pasillo */
-.aisle {
-    width: 20px;
-}
-
-/* Leyenda */
+/* ── Legend ── */
 .legend {
     display: flex;
-    justify-content: center;
-    gap: 16px;
-    margin-top: 18px;
+    gap: 12px;
+    margin-top: 12px;
     flex-wrap: wrap;
 }
 
-.legend-item {
+.leg {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     font-size: 11px;
     color: #6b7280;
 }
 
-.legend-dot {
-    width: 12px;
-    height: 12px;
+.leg-dot {
+    width: 14px;
+    height: 14px;
     border-radius: 3px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Panel de reserva */
+/* ── Panel ── */
 .panel {
     background: #fff;
     border: 0.5px solid #e5e7eb;
@@ -398,66 +376,63 @@ body {
     gap: 12px;
 }
 
-.panel-label {
-    font-size: 11px;
+.plabel {
+    font-size: 10px;
     color: #6b7280;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
-.panel-value {
-    font-size: 14px;
+.pvalue {
+    font-size: 13px;
     font-weight: 500;
-    color: #111827;
 }
 
-.panel-price {
+.pprice {
     font-size: 18px;
     font-weight: 500;
-    color: #2563eb;
-    margin-top: 4px;
+    color: #1d4ed8;
+    margin-top: 3px;
 }
 
-.empty-seat {
+.pempty {
     font-size: 12px;
     color: #9ca3af;
 }
 
-.divider {
+.pdivider {
     border: none;
     border-top: 0.5px solid #e5e7eb;
 }
 
-.summary-row {
+.sumrow {
     display: flex;
     justify-content: space-between;
-    font-size: 12px;
+    font-size: 11px;
     color: #6b7280;
 }
 
-.summary-total {
+.sumtotal {
     display: flex;
     justify-content: space-between;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
-    color: #111827;
 }
 
 .btn-reserve {
-    background: #2563eb;
+    background: #1d4ed8;
     color: #fff;
     border: none;
     border-radius: 8px;
     padding: 10px;
-    font-size: 13px;
-    cursor: pointer;
+    font-size: 12px;
     width: 100%;
-    font-family: inherit;
+    cursor: pointer;
 }
 
     .btn-reserve:hover:not(:disabled) {
-        background: #1d4ed8;
+        background: #1e40af;
     }
 
     .btn-reserve:disabled {
@@ -466,12 +441,28 @@ body {
         cursor: not-allowed;
     }
 
+.btn-cancel {
+    background: #fff;
+    color: #6b7280;
+    border: 0.5px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 9px;
+    font-size: 12px;
+    width: 100%;
+    cursor: pointer;
+    margin-top: 4px;
+}
 
+    .btn-cancel:hover {
+        background: #f9fafb;
+    }
+
+/* ── Spinner ── */
 .spinner {
     width: 24px;
     height: 24px;
     border: 2px solid #e5e7eb;
-    border-top-color: #2563eb;
+    border-top-color: #1d4ed8;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
     margin: 20px auto;
@@ -482,7 +473,6 @@ body {
         transform: rotate(360deg);
     }
 }
-
 
 .no-data {
     font-size: 13px;
@@ -496,4 +486,15 @@ body {
     color: #a32d2d;
     text-align: center;
     padding: 20px;
+}
+
+
+.reservation-timer {
+    display:none; 
+    font-size:12px; 
+    color:#854f0b; 
+    background:#faeeda; 
+    padding:8px;
+    border-radius:8px; 
+    text-align:center;
 }

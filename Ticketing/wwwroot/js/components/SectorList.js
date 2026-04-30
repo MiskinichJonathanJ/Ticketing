@@ -1,7 +1,8 @@
-import { getSectors } from '../config/api.js';
+﻿import { getSectors } from '../config/api.js';
 import { appStore } from '../appStore.js';
 import { showError, formatPrice, formatDate, escapeHtml } from '../utils/helpers.js';
 import { MESSAGES, SELECTORS } from '../config/constants.js';
+import { renderSeatMap } from './SeatMap.js';
 
 export async function renderSectorList() {
     const event = appStore.getState('currentEvent');
@@ -64,5 +65,7 @@ export function selectSector(sectorId) {
     if (!sector) return;
 
     appStore.setState('currentSector', sector);
-    document.dispatchEvent(new CustomEvent('sectorSelected', { detail: sector }));
+
+    // 🔥 solo actualiza el mapa
+    renderSeatMap();
 }

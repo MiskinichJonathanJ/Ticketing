@@ -2,6 +2,9 @@
 import { appStore } from '../appStore.js';
 import { showError, formatDate, escapeHtml } from '../utils/helpers.js';
 import { MESSAGES, SELECTORS } from '../config/constants.js';
+import { renderSectorList } from './SectorList.js';
+import { renderSeatMap } from './SeatMap.js';
+
 
 export async function renderEventList() {
     const container = document.getElementById(SELECTORS.EVENTS_CONTAINER);
