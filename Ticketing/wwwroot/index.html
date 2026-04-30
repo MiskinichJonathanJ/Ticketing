@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TicketApp</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="app">
+        <div class="navbar">
+            <span class="brand">Ticket<span>App</span></span>
+            <span class="user-badge">Usuario Test</span>
+        </div>
+
+        <div id="alert-global" class="alert"></div>
+
+        <!-- Sección Eventos -->
+        <div class="section active" id="section-events">
+            <p class="page-title">Eventos disponibles</p>
+            <p class="page-sub">Seleccioná un evento para ver los asientos</p>
+            <div id="events-container"></div>
+        </div>
+
+        <!-- Sección Sectores -->
+        <div class="section" id="section-sectors">
+            <button class="back-btn" id="btn-back-sectors">← Volver a eventos</button>
+            <p class="page-title">Seleccioná un sector</p>
+            <div id="event-bar"></div>
+            <div id="sectors-container"></div>
+        </div>
+
+        <!-- Sección Asientos -->
+        <div class="section" id="section-seats">
+            <button class="back-btn" id="btn-back-seats">← Volver a sectores</button>
+            <p class="page-title">Mapa de asientos</p>
+            <p class="page-sub" id="sector-subtitle"></p>
+
+            <div class="seat-main">
+                <div class="seat-area">
+                    <div class="stage">
+                        <div class="stage-line"></div>
+                        <div class="stage-label">Escenario</div>
+                    </div>
+                    <div class="rows" id="seat-grid"></div>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div>Disponible</div>
+                        <div class="legend-item"><div class="legend-dot" style="background:#2563eb"></div>Seleccionada</div>
+                        <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Reservada</div>
+                        <div class="legend-item"><div class="legend-dot" style="background:#e5e7eb"></div>Ocupada</div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div>
+                        <div class="panel-label">Butaca seleccionada</div>
+                        <div id="panel-seat" class="empty-seat">Ninguna</div>
+                        <div id="panel-price" class="panel-price"></div>
+                    </div>
+                    <hr class="divider">
+                    <div>
+                        <div class="panel-label">Resumen</div>
+                        <div class="summary-row">
+                            <span id="summary-count">0 butacas</span>
+                            <span id="summary-price">$0</span>
+                        </div>
+                        <hr class="divider" style="margin:8px 0">
+                        <div class="summary-total">
+                            <span>Total</span>
+                            <span id="summary-total">$0</span>
+                        </div>
+                    </div>
+                    <hr class="divider">
+                    <button class="btn-reserve" id="btn-reserve" disabled>Reservar ahora</button>
+                    <button class="btn-secondary" id="btn-cancel">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
