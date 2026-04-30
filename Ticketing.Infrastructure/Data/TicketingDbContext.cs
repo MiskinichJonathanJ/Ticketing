@@ -75,11 +75,9 @@ namespace Ticketing.Infrastructure.Data
                     .HasColumnType("varchar(20)");                
                 entity.Property(s => s.Version)
                     .IsConcurrencyToken();
-                entity.Property(s => s.Status)
-                    .HasConversion<string>(); // Convierte el enum a string en la base de datos
 
                 // Relación con Reservation
-                entity.HasOne(s => s.Reservation)
+               entity.HasOne(s => s.Reservation)
                     .WithOne(r => r.Seat)
                    .HasForeignKey<Reservation>(r => r.SeatId)
                    .OnDelete(DeleteBehavior.Cascade);
@@ -119,8 +117,6 @@ namespace Ticketing.Infrastructure.Data
                 entity.Property(r => r.Status)
                     .IsRequired()
                     .HasColumnType("varchar(20)");
-                entity.Property(r => r.Status)
-                    .HasConversion<string>(); // Convierte el enum a string en la base de datos
             });
 
             modelBuilder.Entity<AuditLog>(entity =>
@@ -139,9 +135,6 @@ namespace Ticketing.Infrastructure.Data
                     .HasColumnType("varchar(max)");
                 entity.Property(a => a.UserId)
                     .IsRequired(false);
-                entity.Property(a => a.CreatedAt)
-                    .IsRequired()
-                    .HasColumnType("datetime2");
             });
 
 
