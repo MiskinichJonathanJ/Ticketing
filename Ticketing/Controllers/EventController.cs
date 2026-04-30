@@ -1,7 +1,5 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Ticketing.Application.DTOs;
 using Ticketing.Application.UseCases.Events.Queries.GetAllEvents;
 using Ticketing.Application.UseCases.Seats.Queries.GetSeatsByEvent;
 using Ticketing.Application.UseCases.Sectors.Queries.GetSectorsByEvent;
