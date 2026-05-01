@@ -40,6 +40,7 @@ let currentSector = null;
 let currentSeatData = null;
 let reservationTimer = null;
 let allSeats = []; // guardamos todos los asientos para el mapa completo
+let currentReservedSeatId = null; // ← guardamos el id de la butaca reservada
 
 // ── Timer de reserva ─────────────────────────────────────────
 function startReservationTimer(seatId, seatBtn) {
@@ -386,6 +387,7 @@ document.getElementById('btn-reserve').addEventListener('click', async () => {
     // Guarda referencia al botón de la butaca
     const seatBtn = document.querySelector(`[data-seat-id="${selectedSeatId}"]`);
     const seatIdToReserve = selectedSeatId;
+    currentReservedSeatId = selectedSeatId; //  guardamos para el cancel
 
     try {
         await reserveSeat(selectedSeatId, DEFAULT_USER_ID);
@@ -428,18 +430,36 @@ document.getElementById('btn-reserve').addEventListener('click', async () => {
 });
 
 document.getElementById('btn-cancel').addEventListener('click', () => {
-    // Deselecciona la butaca visualmente
+    // Si hay un timer corriendo, guardamos el seatId antes de pararlo
+    const activeSeatId = reservationTimer ? currentReservedSeatId : null;
+
+    // Paramos el timer
+    stopReservationTimer();
+
+    // Si había una reserva activa, volvemos la butaca a disponible
+    if (activeSeatId) {
+        const seatEl = document.querySelector(`[data-seat-id="${activeSeatId}"]`);
+        if (seatEl) {
+            seatEl.innerHTML = seatSVG('#1d4ed8');
+            seatEl.disabled = false;
+            seatEl.addEventListener('click', () => {
+                const seat = allSeats.find(s => s.id === activeSeatId);
+                if (seat) onSeatClick(seatEl, seat);
+            });
+        }
+        // Actualizamos el estado en el array local
+        const seat = allSeats.find(s => s.id === activeSeatId);
+        if (seat) seat.status = 'Available';
+    }
+
+    // Deseleccionamos cualquier butaca seleccionada
     document.querySelectorAll('.seat-btn:not(:disabled)').forEach(b => {
         b.innerHTML = seatSVG('#1d4ed8');
     });
 
-    // Para el timer si está corriendo
-    stopReservationTimer();
-
-    // Resetea el panel
+    // Reseteamos el panel
     const panelSeat = document.getElementById('panel-seat');
     if (panelSeat) panelSeat.style.color = '';
-
     const btn = document.getElementById('btn-reserve');
     if (btn) btn.textContent = 'Reservar ahora';
 
@@ -447,6 +467,9 @@ document.getElementById('btn-cancel').addEventListener('click', () => {
     currentSeatData = null;
     updatePanel();
 });
+
+
+
 
 document.getElementById('btn-back').addEventListener('click', () => {
     stopPolling(); 
