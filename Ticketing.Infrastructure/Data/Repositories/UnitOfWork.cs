@@ -19,6 +19,10 @@ public class UnitOfWork(TicketingDbContext context) : IUnitOfWork
         try
         {
             await _context.SaveChangesAsync(cancellationToken);
+            if (_transaction != null)
+            {
+                await _transaction.CommitAsync(cancellationToken);
+            }
         }
         catch (DbUpdateConcurrencyException ex)
         {

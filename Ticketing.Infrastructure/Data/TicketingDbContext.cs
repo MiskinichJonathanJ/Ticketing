@@ -20,6 +20,7 @@ namespace Ticketing.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            Ticketing.Infrastructure.Data.TicketingDbContextSeed.Seed(modelBuilder);
 
             // Configuración adicional del modelo si es necesaria
             
