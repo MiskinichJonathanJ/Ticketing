@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Ticketing.Application.Interfaces;
 using Ticketing.Infrastructure.Data;
 using Ticketing.Infrastructure.Data.Repositories;
@@ -7,10 +8,34 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddValidatorsFromAssembly(typeof(IApplicationMarker).Assembly);
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Ticketing API",
+        Version = "v1",
+        Description = "API profesional para la gestión y reserva de asientos.",
+        Contact = new OpenApiContact
+        {
+            Name = "Soporte Técnico",
+            Email = "soporte@ticketing.com"
+        }
+    });
+
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+    options.IncludeXmlComments(xmlPath);
+});
+
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssemblyContaining<IApplicationMarker>();
+});
 
 builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 builder.Services.AddScoped<IEventRepository, EventRepository>();

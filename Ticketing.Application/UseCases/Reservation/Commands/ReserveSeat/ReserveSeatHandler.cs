@@ -1,14 +1,17 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using MediatR;
 using Ticketing.Application.DTOs;
 using Ticketing.Application.Interfaces;
 using Ticketing.Domain.Entities;
 using Ticketing.Domain.Enums;
+using Ticketing.Domain.Exceptions;
 
 namespace Ticketing.Application.UseCases.Reservation.Commands.ReserveSeat
 {
     public class ReserveSeatHandler : IRequestHandler<ReserveSeatCommand, ReservationDto>
     {
+        private readonly IValidator<ReserveSeatCommand> _validator;
         private readonly ISeatRepository _seatRepository;
         private readonly IReservationRepository _reservationRepository;
         private readonly IAuditLogRepository _auditLogRepository;
@@ -20,6 +23,7 @@ namespace Ticketing.Application.UseCases.Reservation.Commands.ReserveSeat
             IReservationRepository reservationRepository,
             IAuditLogRepository auditLogRepository,
             IUnitOfWork unitOfWork,
+            IValidator<ReserveSeatCommand> validator,
             IMapper mapper)
         {
             _seatRepository = seatRepository;
@@ -27,17 +31,23 @@ namespace Ticketing.Application.UseCases.Reservation.Commands.ReserveSeat
             _auditLogRepository = auditLogRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _validator = validator;
         }
 
         public async Task<ReservationDto> Handle(ReserveSeatCommand request, CancellationToken cancellationToken)
         {
+            var validationResult = await _validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
+
             await _unitOfWork.BeginTransactionAsync(cancellationToken);
             var seat = await _seatRepository.GetByIdAsync(request.SeatId);
 
             if (seat == null)
             {
                 await LogAudit(request, "RESERVE_SEAT_FAILED_NOT_FOUND", cancellationToken);
-                throw new Exception("Seat not found"); // Podrías usar una excepción personalizada
+                throw new Exception("Seat not found"); 
             }
 
             if (seat.Status != SeatStatus.Available)
@@ -76,11 +86,15 @@ namespace Ticketing.Application.UseCases.Reservation.Commands.ReserveSeat
 
                 await _unitOfWork.CommitAsync(cancellationToken);
             }
-            catch
+            catch (ConcurrencyConflictException)
             {
                 await _unitOfWork.RollbackAsync(cancellationToken);
-
-                await LogAudit(request, "RESERVE_FAILED_EXCEPTION", cancellationToken);
+                await LogAudit(request, "RESERVE_FAILED_CONCURRENCY", cancellationToken);
+                throw; 
+            }
+            catch (Exception)
+            {
+                await _unitOfWork.RollbackAsync(cancellationToken);
                 throw;
             }
 
