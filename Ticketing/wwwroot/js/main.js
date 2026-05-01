@@ -131,6 +131,8 @@ function updatePanel() {
 
 // ── Mapa de asientos ─────────────────────────────────────────
 function onSeatClick(btn, seat) {
+    // Prevenimos click en butacas que ya no están disponibles
+    if (seat.status !== SEAT_STATUS.AVAILABLE) return;
     document.querySelectorAll('.seat-btn:not(:disabled)').forEach(b => {
         b.innerHTML = seatSVG('#1d4ed8');
     });
@@ -343,6 +345,7 @@ window.selectEvent = async function (eventId) {
 
     showSection('section-seats');
     await loadSectors(eventId);
+    startPolling();
 };
 
 // ── Reserva ───────────────────────────────────────────────────
@@ -376,15 +379,16 @@ document.getElementById('btn-reserve').addEventListener('click', async () => {
         currentSeatData = null;
         updatePanel();
 
-        // Iniciamos el timer de expiración
+        // Inicio del timer de expiración
         startReservationTimer(seatIdToReserve, seatBtn);
 
     } catch (error) {
         if (error.status === 409) {
-            showAlert('⚠️ La butaca ya no está disponible', 'warning');
+            showAlert('⚠️ Otro usuario reservó esta butaca. El mapa se actualizó.', 'warning');
         } else {
             showAlert(MESSAGES.RESERVE_ERROR || 'Error al reservar', 'error');
         }
+        allSeats = [];
         if (currentSector) await loadSeatMap(currentSector, false);
     } finally {
         btn.disabled = false;
@@ -402,10 +406,33 @@ document.getElementById('btn-cancel').addEventListener('click', () => {
 });
 
 document.getElementById('btn-back').addEventListener('click', () => {
+    stopPolling(); 
     stopReservationTimer();
     allSeats = [];
     showSection('section-events');
 });
+
+// ── Polling — refresca el mapa cada 30 segundos ──────────────
+let pollingInterval = null;
+
+function startPolling() {
+    stopPolling();
+    pollingInterval = setInterval(async () => {
+        if (currentSector) {
+            // Reseteamos los asientos para traer datos frescos
+            allSeats = [];
+            await loadSeatMap(currentSector, false);
+        }
+    }, 30000);
+}
+
+function stopPolling() {
+    if (pollingInterval) {
+        clearInterval(pollingInterval);
+        pollingInterval = null;
+    }
+}
+
 
 // ── Init ──────────────────────────────────────────────────────
 loadEvents();
