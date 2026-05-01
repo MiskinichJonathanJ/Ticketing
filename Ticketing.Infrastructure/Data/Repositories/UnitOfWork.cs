@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Ticketing.Application.Interfaces;
 using Ticketing.Domain.Exceptions;
 using Ticketing.Infrastructure.Data;
@@ -17,7 +18,7 @@ public class UnitOfWork(TicketingDbContext context) : IUnitOfWork
     {
         try
         {
-        await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
         }
         catch (DbUpdateConcurrencyException ex)
         {
