@@ -13,11 +13,21 @@ namespace Ticketing.Infrastructure.Data
     {
         public static void Seed(ModelBuilder modelBuilder)
         {
+            SeedUsers(modelBuilder);
             SeedEvents(modelBuilder);
             SeedSectors(modelBuilder);
             SeedSeats(modelBuilder);
         }
-
+        private static void SeedUsers(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>().HasData(new User
+            {
+                Id = 1,
+                Name = "Usuario Test",
+                Email = "test@ticketing.com",
+                PasswordHash = "seed-placeholder-hash"
+            });
+        }
         private static void SeedEvents(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Event>().HasData(new Event

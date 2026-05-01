@@ -1,4 +1,9 @@
-export const BASE_URL = 'http://localhost:5118/api/v1';
+ï»¿const port = window.location.port;
+const base = window.location.origin;
+
+export const BASE_URL = (port === '5118' || port === '5000' || port === '')
+    ? `${base}/api/v1`
+    : 'http://localhost:5118/api/v1';
 
 
 export const RESERVATION_TIMEOUT = 5;
@@ -31,17 +36,17 @@ export const SEAT_STATUS = {
 
 export const MESSAGES = {
     
-    RESERVE_SUCCESS: '¡Butaca reservada exitosamente!',
+    RESERVE_SUCCESS: 'Â¡Butaca reservada exitosamente!',
 
     
     LOAD_EVENTS_ERROR: 'Error al cargar los eventos',
     LOAD_SECTORS_ERROR: 'Error al cargar los sectores',
     LOAD_SEATS_ERROR: 'Error al cargar los asientos',
-    SEAT_NOT_AVAILABLE: 'La butaca ya no está disponible',
+    SEAT_NOT_AVAILABLE: 'La butaca ya no estÃ¡ disponible',
     SEAT_NOT_FOUND: 'Butaca no encontrada',
     RESERVE_ERROR: 'Error al reservar la butaca',
-    CONNECTION_ERROR: 'Error de conexión. Por favor intente más tarde.',
-    UNEXPECTED_ERROR: 'Ocurrió un error inesperado'
+    CONNECTION_ERROR: 'Error de conexiÃ³n. Por favor intente mÃ¡s tarde.',
+    UNEXPECTED_ERROR: 'OcurriÃ³ un error inesperado'
 };
 
 

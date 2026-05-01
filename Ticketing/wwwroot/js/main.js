@@ -257,7 +257,7 @@ async function loadSeatMap(sector, animate = true) {
 
            
             if (allSeats.length === 0) {
-                allSeats = await getSeats(event.id);
+                allSeats = await getSeats(event.id, sector.id);
             }
 
             const seats = allSeats.filter(s => s.sectorName === sector.name);

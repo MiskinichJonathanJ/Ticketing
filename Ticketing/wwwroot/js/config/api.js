@@ -3,7 +3,7 @@
 // ══════════════════════════════════════════════
 // MODO MOCK — datos falsos hasta que el back esté listo
 // Cambiar a false cuando el backend esté funcionando
-const USE_MOCK = true;
+const USE_MOCK = false;
 // ══════════════════════════════════════════════
 
 // Genera 50 butacas por sector con algunos estados variados
@@ -135,9 +135,11 @@ export async function getSectors(eventId) {
     return apiRequest(buildApiUrl(API_CONFIG.ENDPOINTS.EVENTS, `/${eventId}/sectors`));
 }
 
-export async function getSeats(eventId) {
+export async function getSeats(eventId, sectorId) {
     if (USE_MOCK) return MOCK_DATA.seats;
-    return apiRequest(buildApiUrl(API_CONFIG.ENDPOINTS.EVENTS, `/${eventId}/seats`));
+    return apiRequest(
+        buildApiUrl(API_CONFIG.ENDPOINTS.EVENTS, `/${eventId}/sectors/${sectorId}/seats`)
+    );
 }
 
 export async function reserveSeat(seatId, userId) {
