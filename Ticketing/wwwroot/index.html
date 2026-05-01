@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TicketApp</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="nav">
+        <span class="brand">Ticket<span>App</span></span>
+        <span class="user-pill">Usuario Test</span>
+    </div>
+
+    <div id="alert-global" class="alert"></div>
+
+    <!-- Sección Eventos -->
+    <div class="section active" id="section-events">
+        <div class="events-wrap">
+            <p class="pg-title">Eventos disponibles</p>
+            <p class="pg-sub">Seleccioná un evento para ver los asientos</p>
+            <div id="events-container"></div>
+        </div>
+    </div>
+
+    <!-- Sección Asientos -->
+    <div class="section" id="section-seats">
+        <div class="event-bar" id="event-bar"></div>
+        <button class="back-btn" id="btn-back">← Volver a eventos</button>
+        <div class="seats-content">
+
+            <p class="sector-title">Selecciona un sector</p>
+            <div class="sector-grid" id="sectors-container"></div>
+            <p class="map-title">Mapa de asientos</p>
+            <p class="map-sub" id="map-sub">Selecciona un sector para ver las butacas</p>
+            <div class="map-layout">
+
+                <div class="map-area" id="map-area">
+
+                    <div class="stage-wrap">
+                        <div class="stage-arc"></div>
+                        <div class="stage-txt">ESCENARIO</div>
+                    </div>
+
+                    <<div class="map-inner">
+                        <div class="grid-rows" id="seat-grid">
+                            <p class="no-data">Seleccioná un sector para ver las butacas</p>
+                        </div>
+                    </div>
+
+                    <div class="legend">
+                        <div class="leg"><div class="leg-dot" style="background:#1d4ed8"></div>Disponible</div>
+                        <div class="leg"><div class="leg-dot" style="background:#60a5fa"></div>Seleccionada</div>
+                        <div class="leg"><div class="leg-dot" style="background:#f59e0b"></div>Reservada</div>
+                        <div class="leg"><div class="leg-dot" style="background:#9ca3af"></div>Ocupada</div>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div>
+                        <div class="plabel">Sector</div>
+                        <div class="pvalue" id="panel-sector">-</div>
+                        <div class="pprice" id="panel-sector-price"></div>
+                    </div>
+                    <hr class="pdivider">
+                    <div>
+                        <div class="plabel">Butaca seleccionada</div>
+                        <div id="panel-seat" class="pempty">Ninguna</div>
+                        <div id="panel-price" class="pprice" style="display:none"></div>
+                    </div>
+                    <hr class="pdivider">
+                    <div>
+                        <div class="plabel">Resumen</div>
+                        <div class="sumrow">
+                            <span id="sum-count">0 butacas</span>
+                            <span id="sum-price">$0</span>
+                        </div>
+                        <hr class="pdivider" style="margin:6px 0">
+                        <div class="sumtotal">
+                            <span>Total</span>
+                            <span id="sum-total">$0</span>
+                        </div>
+                    </div>
+                    <hr class="pdivider">
+                    <button class="btn-reserve" id="btn-reserve" disabled>Reservar ahora</button>
+                    
+                    <div id="reservation-timer"></div>
+                    <button class="btn-cancel" id="btn-cancel">Cancelar selección</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
