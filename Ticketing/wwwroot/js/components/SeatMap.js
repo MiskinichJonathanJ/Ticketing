@@ -50,7 +50,7 @@ export async function renderSeatMap() {
         const reservation = await tryReserveSeat(selectedSeatId);
 
         if (reservation) {
-            // Reserva exitosa → actualizamos la butaca en el mapa
+            // Reserva exitosa actualiza la butaca en el mapa
             const seatEl = document.querySelector(`[data-seat-id="${selectedSeatId}"]`);
             if (seatEl) {
                 seatEl.classList.remove('selected', 'available');
@@ -60,7 +60,7 @@ export async function renderSeatMap() {
             selectedSeatId = null;
             updatePanel(null, sector);
         } else {
-            // Error → refrescamos el mapa
+            // refrescar el mapa
             renderSeatMap();
         }
     };
@@ -93,7 +93,26 @@ function buildGrid(container, seats, sector) {
             .sort((a, b) => a.seatNumber - b.seatNumber)
             .forEach((seat, index) => {
 
-                // pasillo en el medio
+                document.getElementById('btn-cancel').addEventListener('click', () => {
+                    // Deselecciona la butaca visualmente
+                    document.querySelectorAll('.seat-btn:not(:disabled)').forEach(b => {
+                        b.innerHTML = seatSVG('#1d4ed8');
+                    });
+
+                    // Para el timer si está corriendo
+                    stopReservationTimer();
+
+                    // Resetea el panel
+                    const panelSeat = document.getElementById('panel-seat');
+                    if (panelSeat) panelSeat.style.color = '';
+
+                    const btn = document.getElementById('btn-reserve');
+                    if (btn) btn.textContent = 'Reservar ahora';
+
+                    selectedSeatId = null;
+                    currentSeatData = null;
+                    updatePanel();
+                });
                 if (index === Math.floor(rowSeats.length / 2)) {
                     const aisle = document.createElement('div');
                     aisle.className = 'aisle';
@@ -127,20 +146,20 @@ function buildGrid(container, seats, sector) {
 
 
 function onSeatClick(btn, seat, sector) {
-    // Deseleccionamos la anterior
+    // Deselecciona la anterior
     document.querySelectorAll('.seat.selected').forEach(s => {
         s.classList.remove('selected');
         s.classList.add('available');
     });
 
-    // Si clickeamos la misma la deseleccionamos
+    // Si clickea la misma la deselecciona
     if (selectedSeatId === seat.id) {
         selectedSeatId = null;
         updatePanel(null, sector);
         return;
     }
 
-    // Seleccionamos la nueva
+    // Selecciona la nueva
     btn.classList.remove('available');
     btn.classList.add('selected');
     selectedSeatId = seat.id;

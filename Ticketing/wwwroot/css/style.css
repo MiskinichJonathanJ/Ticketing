@@ -321,14 +321,14 @@ body {
 }
 
 .seat-btn {
-    width: 26px;
-    height: 26px;
+    width: 30px;
+    height: 30px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     flex-shrink: 0;
     transition: transform 0.15s;
-    padding: 3px;
+    padding: 2px;
     background: transparent;
     display: flex;
     align-items: center;

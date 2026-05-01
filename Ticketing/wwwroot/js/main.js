@@ -5,8 +5,19 @@ import { MESSAGES, SEAT_STATUS, DEFAULT_USER_ID, RESERVATION_TIMEOUT } from './c
 
 // ── SVG silla ────────────────────────────────────────────────
 function seatSVG(color) {
-    return `<svg viewBox="0 0 24 24" width="20" height="20">
-        <path d="M5 11V6a2 2 0 0 1 4 0v5h6V6a2 2 0 0 1 4 0v5a3 3 0 0 1 2 3v3h-2v1a1 1 0 0 1-2 0v-1H7v1a1 1 0 0 1-2 0v-1H3v-3a3 3 0 0 1 2-3z" fill="${color}"/>
+    return `<svg viewBox="0 0 100 100" width="22" height="22">
+        <!-- Respaldo -->
+        <rect x="10" y="5" width="80" height="55" rx="12" ry="12" fill="${color}"/>
+        <!-- Asiento -->
+        <rect x="5" y="55" width="90" height="28" rx="8" ry="8" fill="${color}"/>
+        <!-- Patas izquierda -->
+        <rect x="12" y="80" width="14" height="18" rx="4" ry="4" fill="${color}"/>
+        <!-- Patas derecha -->
+        <rect x="74" y="80" width="14" height="18" rx="4" ry="4" fill="${color}"/>
+        <!-- Apoyabrazos izquierdo -->
+        <rect x="0" y="38" width="14" height="30" rx="6" ry="6" fill="${color}"/>
+        <!-- Apoyabrazos derecho -->
+        <rect x="86" y="38" width="14" height="30" rx="6" ry="6" fill="${color}"/>
     </svg>`;
 }
 
@@ -34,7 +45,7 @@ let allSeats = []; // guardamos todos los asientos para el mapa completo
 function startReservationTimer(seatId, seatBtn) {
     let secondsLeft = RESERVATION_TIMEOUT * 60; // 5 minutos en segundos
 
-    // Mostramos el timer en el panel
+    // Mostrar timer en el panel
     const timerEl = document.getElementById('reservation-timer');
     if (timerEl) timerEl.style.display = 'block';
 
@@ -52,7 +63,7 @@ function startReservationTimer(seatId, seatBtn) {
             showAlert('⚠️ Tu reserva expira en 1 minuto', 'warning');
         }
 
-        // Expiró
+        // Momento en que expira
         if (secondsLeft <= 0) {
             clearInterval(reservationTimer);
             reservationTimer = null;
@@ -62,22 +73,16 @@ function startReservationTimer(seatId, seatBtn) {
                 seatBtn.innerHTML = seatSVG('#1d4ed8');
                 seatBtn.disabled = false;
 
-                // Restauramos el evento de click
+                // Restaura el evento de click
                 seatBtn.addEventListener('click', () => {
                     const seat = allSeats.find(s => s.id === seatId);
                     if (seat) onSeatClick(seatBtn, seat);
                 });
             }
 
-            // También actualizamos en el array local
-            const seat = allSeats.find(s => s.id === seatId);
-            if (seat) seat.status = 'Available';
-
-            showAlert('⏰ Tu reserva expiró. La butaca volvió a estar disponible.', 'error');
-            if (timerEl) timerEl.style.display = 'none';
-
-            selectedSeatId = null;
-            currentSeatData = null;
+            // Actualiza el array
+            const panelSeat = document.getElementById('panel-seat');
+            panelSeat.style.color = ''; 
             updatePanel();
         }
     }, 1000);
@@ -91,6 +96,28 @@ function stopReservationTimer() {
     const timerEl = document.getElementById('reservation-timer');
     if (timerEl) timerEl.style.display = 'none';
 }
+
+function updatePanelReservation(seat) {
+    const panelSeat = document.getElementById('panel-seat');
+    const panelPrice = document.getElementById('panel-price');
+    const sumCount = document.getElementById('sum-count');
+    const sumPrice = document.getElementById('sum-price');
+    const sumTotal = document.getElementById('sum-total');
+    const btn = document.getElementById('btn-reserve');
+
+    // Mostrar info de la reserva activa
+    panelSeat.textContent = `Fila ${seat.rowIdentifier} · Butaca ${seat.seatNumber}`;
+    panelSeat.className = 'pvalue';
+    panelSeat.style.color = '#f59e0b'; // amarillo para indicar que está reservada
+    panelPrice.textContent = formatPrice(currentSector.price);
+    panelPrice.style.display = 'block';
+    sumCount.textContent = '1 butaca reservada';
+    sumPrice.textContent = formatPrice(currentSector.price);
+    sumTotal.textContent = formatPrice(currentSector.price);
+    btn.disabled = true;
+    btn.textContent = 'Butaca reservada ⏱';
+}
+
 
 // ── Panel ────────────────────────────────────────────────────
 function updatePanel() {
@@ -131,7 +158,7 @@ function updatePanel() {
 
 // ── Mapa de asientos ─────────────────────────────────────────
 function onSeatClick(btn, seat) {
-    // Prevenimos click en butacas que ya no están disponibles
+    // Prevenir click en butacas que ya no están disponibles
     if (seat.status !== SEAT_STATUS.AVAILABLE) return;
     document.querySelectorAll('.seat-btn:not(:disabled)').forEach(b => {
         b.innerHTML = seatSVG('#1d4ed8');
@@ -227,7 +254,7 @@ async function loadSeatMap(sector, animate = true) {
         try {
             const event = appStore.getState('currentEvent');
 
-            // Solo cargamos si no los tenemos ya
+           
             if (allSeats.length === 0) {
                 allSeats = await getSeats(event.id);
             }
@@ -269,7 +296,7 @@ async function loadSectors(eventId) {
             </div>
         `).join('');
 
-        // Cargamos el primer sector por defecto sin animación
+        // Carga el primer sector por defecto 
         if (sectors.length > 0) {
             await loadSeatMap(sectors[0], false);
         }
@@ -285,7 +312,7 @@ window.selectSector = async function (sectorId) {
     const sector = sectors.find(s => s.id === sectorId);
     if (!sector || (currentSector && currentSector.id === sectorId)) return;
 
-    // Actualizamos cards
+    // Actualiza cards
     document.querySelectorAll('.sector-card').forEach(c => c.classList.remove('active'));
     const card = document.getElementById(`sector-card-${sectorId}`);
     card.classList.add('active', 'pulse');
@@ -313,7 +340,7 @@ async function loadEvents() {
                 <div>
                     <div class="event-name">${escapeHtml(event.name)}</div>
                     <div class="event-meta">
-                        📅 ${formatDate(event.eventDate)} · 📍 ${escapeHtml(event.venue)}
+                         ${formatDate(event.eventDate)}  ${escapeHtml(event.venue)}
                     </div>
                     <span class="badge-active">${escapeHtml(event.status)}</span>
                 </div>
@@ -335,7 +362,7 @@ window.selectEvent = async function (eventId) {
     if (!event) return;
 
     appStore.setState('currentEvent', event);
-    allSeats = []; // reseteamos los asientos al cambiar de evento
+    allSeats = []; // resetea los asientos al cambiar de evento
 
     document.getElementById('event-bar').innerHTML = `
         <div><div class="bi-label">Evento</div><div class="bi-value">${escapeHtml(event.name)}</div></div>
@@ -356,31 +383,35 @@ document.getElementById('btn-reserve').addEventListener('click', async () => {
     btn.disabled = true;
     btn.textContent = 'Reservando...';
 
-    // Guardamos referencia al botón de la butaca
+    // Guarda referencia al botón de la butaca
     const seatBtn = document.querySelector(`[data-seat-id="${selectedSeatId}"]`);
     const seatIdToReserve = selectedSeatId;
 
     try {
         await reserveSeat(selectedSeatId, DEFAULT_USER_ID);
 
-        // Butaca pasa a amarillo
+        // Butaca pasa a amarillo (reserva)
         if (seatBtn) {
             seatBtn.innerHTML = seatSVG('#f59e0b');
             seatBtn.disabled = true;
         }
 
-        // Actualizamos estado local
+        // Actualiza estado local
         const seat = allSeats.find(s => s.id === seatIdToReserve);
         if (seat) seat.status = 'Reserved';
 
         showAlert('✅ ¡Butaca reservada! Tenés 5 minutos para completar el pago.', 'success');
 
+        // Guarda la info de la reserva para mostrarla en el panel
+        const reservedSeat = currentSeatData;
         selectedSeatId = null;
         currentSeatData = null;
-        updatePanel();
 
-        // Inicio del timer de expiración
-        startReservationTimer(seatIdToReserve, seatBtn);
+        // Mostrar reserva activa en el panel
+        updatePanelReservation(reservedSeat);
+
+        // Inicia timer de expiración
+        startReservationTimer(seatIdToReserve, seatBtn, reservedSeat);
 
     } catch (error) {
         if (error.status === 409) {
@@ -397,9 +428,21 @@ document.getElementById('btn-reserve').addEventListener('click', async () => {
 });
 
 document.getElementById('btn-cancel').addEventListener('click', () => {
+    // Deselecciona la butaca visualmente
     document.querySelectorAll('.seat-btn:not(:disabled)').forEach(b => {
         b.innerHTML = seatSVG('#1d4ed8');
     });
+
+    // Para el timer si está corriendo
+    stopReservationTimer();
+
+    // Resetea el panel
+    const panelSeat = document.getElementById('panel-seat');
+    if (panelSeat) panelSeat.style.color = '';
+
+    const btn = document.getElementById('btn-reserve');
+    if (btn) btn.textContent = 'Reservar ahora';
+
     selectedSeatId = null;
     currentSeatData = null;
     updatePanel();
@@ -419,7 +462,7 @@ function startPolling() {
     stopPolling();
     pollingInterval = setInterval(async () => {
         if (currentSector) {
-            // Reseteamos los asientos para traer datos frescos
+            // Resetea los asientos para traer datos frescos
             allSeats = [];
             await loadSeatMap(currentSector, false);
         }

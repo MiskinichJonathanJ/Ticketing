@@ -51,8 +51,7 @@ class AppStore {
         });
     }
 
-    // Suscribirse a cambios de un valor
-    // Devuelve una función para desuscribirse
+    // Suscribirse a cambios de un valor y devuelve una función para desuscribirse
     subscribe(key, callback) {
         if (typeof callback !== 'function') return () => { };
         if (!(key in this.#state)) return () => { };

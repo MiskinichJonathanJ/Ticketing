@@ -8,7 +8,7 @@ export async function renderSectorList() {
     const event = appStore.getState('currentEvent');
     if (!event) return;
 
-    // Actualizamos la barra de info del evento
+    // Actualiza la barra de info del evento
     const eventBar = document.getElementById('event-bar');
     if (eventBar) {
         eventBar.innerHTML = `
@@ -66,6 +66,6 @@ export function selectSector(sectorId) {
 
     appStore.setState('currentSector', sector);
 
-    // 🔥 solo actualiza el mapa
+    // solo actualiza el mapa
     renderSeatMap();
 }
