@@ -139,6 +139,9 @@ namespace Ticketing.Infrastructure.Data
                     .HasColumnType("varchar(max)");
                 entity.Property(a => a.UserId)
                     .IsRequired(false);
+                entity.Property(a => a.CreatedAt)
+                    .IsRequired()
+                    .HasColumnType("datetime2");
             });
 
 
