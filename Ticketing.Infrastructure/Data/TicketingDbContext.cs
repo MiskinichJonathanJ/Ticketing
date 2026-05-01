@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+ï»¿using Microsoft.EntityFrameworkCore;
 using Ticketing.Domain.Entities;
 
 namespace Ticketing.Infrastructure.Data
@@ -20,8 +20,9 @@ namespace Ticketing.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            Ticketing.Infrastructure.Data.TicketingDbContextSeed.Seed(modelBuilder);
 
-            // Configuración adicional del modelo si es necesaria
+            // ConfiguraciÃ³n adicional del modelo si es necesaria
             
 
             modelBuilder.Entity<Event>(entity =>
@@ -56,7 +57,7 @@ namespace Ticketing.Infrastructure.Data
                     .HasColumnType("decimal(10,2)");
 ;
 
-                // Relación con Seat
+                // RelaciÃ³n con Seat
                 entity.HasMany(s => s.Seats)
                     .WithOne(se => se.Sector)
                     .HasForeignKey(se => se.SectorId)
@@ -76,7 +77,7 @@ namespace Ticketing.Infrastructure.Data
                 entity.Property(s => s.Version)
                     .IsConcurrencyToken();
 
-                // Relación con Reservation
+                // RelaciÃ³n con Reservation
                entity.HasOne(s => s.Reservation)
                     .WithOne(r => r.Seat)
                    .HasForeignKey<Reservation>(r => r.SeatId)
@@ -135,6 +136,9 @@ namespace Ticketing.Infrastructure.Data
                     .HasColumnType("varchar(max)");
                 entity.Property(a => a.UserId)
                     .IsRequired(false);
+                entity.Property(a => a.CreatedAt)
+                    .IsRequired()
+                    .HasColumnType("datetime2");
             });
 
 

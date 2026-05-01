@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ticketing.Domain.Entities;
+using Ticketing.Domain.Enums;
 
 namespace Ticketing.Infrastructure.Data
 {
@@ -52,7 +53,7 @@ namespace Ticketing.Infrastructure.Data
                         SectorId = sectorId,
                         RowIdentifier = GetRowIdentifier(i),
                         SeatNumber = i,
-                        Status = "Available",
+                        Status = SeatStatus.Available,
                         Version = 0
                     });
                     index++;

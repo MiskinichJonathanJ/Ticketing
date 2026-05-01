@@ -14,8 +14,7 @@ namespace Ticketing.Domain.Entities
         public string EntityType { get; set; } = string.Empty;
         public string EntityId { get; set; } = string.Empty;
         public string Details { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; }
-
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public virtual User? User { get; set; }
     }
 }
