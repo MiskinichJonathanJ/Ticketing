@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Ticketing.Application.Interfaces;
+using Ticketing.Domain.Exceptions;
 using Ticketing.Infrastructure.Data;
 
 public class UnitOfWork(TicketingDbContext context) : IUnitOfWork
@@ -14,8 +16,14 @@ public class UnitOfWork(TicketingDbContext context) : IUnitOfWork
 
     public async Task CommitAsync(CancellationToken cancellationToken)
     {
-        await _context.SaveChangesAsync(cancellationToken);
-        await _transaction.CommitAsync(cancellationToken);
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            throw new ConcurrencyConflictException("El asiento ya ha sido modificado por otro proceso.", ex);
+        }
     }
 
     public async Task RollbackAsync(CancellationToken cancellationToken)

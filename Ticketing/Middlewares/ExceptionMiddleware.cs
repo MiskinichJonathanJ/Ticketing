@@ -1,4 +1,7 @@
-﻿namespace Ticketing.Middlewares
+﻿using System.Data;
+using Ticketing.Domain.Exceptions;
+
+namespace Ticketing.Middlewares
 {
     public class ExceptionMiddleware(RequestDelegate next)
     {
@@ -15,6 +18,14 @@
                 await HandleException(context, 404, ex.Message);
             }
             catch (InvalidOperationException ex)
+            {
+                await HandleException(context, 409, ex.Message);
+            }
+            catch (DBConcurrencyException ex)
+            {
+                await HandleException(context, 409, ex.Message);
+            }
+            catch (ConcurrencyConflictException ex)
             {
                 await HandleException(context, 409, ex.Message);
             }
