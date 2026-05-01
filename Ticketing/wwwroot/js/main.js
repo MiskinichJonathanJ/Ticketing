@@ -179,6 +179,8 @@ function onSeatClick(btn, seat) {
 }
 
 function buildGrid(container, seats) {
+    const previouslySelected = selectedSeatId;
+
     const rows = {};
     seats.forEach(seat => {
         if (!rows[seat.rowIdentifier]) rows[seat.rowIdentifier] = [];
@@ -217,6 +219,9 @@ function buildGrid(container, seats) {
             if (seat.status === SEAT_STATUS.AVAILABLE) {
                 btn.innerHTML = seatSVG('#1d4ed8');
                 btn.addEventListener('click', () => onSeatClick(btn, seat));
+                if (seat.id === previouslySelected && seat.status === SEAT_STATUS.AVAILABLE) {
+                    btn.innerHTML = seatSVG('#60a5fa');
+                }
             } else if (seat.status === SEAT_STATUS.RESERVED) {
                 btn.innerHTML = seatSVG('#f59e0b');
                 btn.disabled = true;
@@ -312,6 +317,7 @@ window.selectSector = async function (sectorId) {
     const sectors = appStore.getState('sectors');
     const sector = sectors.find(s => s.id === sectorId);
     if (!sector || (currentSector && currentSector.id === sectorId)) return;
+    allSeats = [];
 
     // Actualiza cards
     document.querySelectorAll('.sector-card').forEach(c => c.classList.remove('active'));
@@ -484,10 +490,21 @@ let pollingInterval = null;
 function startPolling() {
     stopPolling();
     pollingInterval = setInterval(async () => {
-        if (currentSector) {
-            // Resetea los asientos para traer datos frescos
-            allSeats = [];
-            await loadSeatMap(currentSector, false);
+        if (!currentSector) return;
+
+        // Capturamos el sector activo en este momento
+        const sectorSnapshot = currentSector;
+
+        try {
+            const event = appStore.getState('currentEvent');
+            const freshSeats = await getSeats(event.id, sectorSnapshot.id);
+
+            if (currentSector?.id !== sectorSnapshot.id) return;
+
+            allSeats = freshSeats;
+            buildGrid(document.getElementById('seat-grid'), freshSeats);
+        } catch (error) {
+            console.warn('Polling error:', error);
         }
     }, 30000);
 }
