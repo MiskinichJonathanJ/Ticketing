@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using Ticketing.Domain.Exceptions;
+using FluentValidation;
 
 namespace Ticketing.Middlewares
 {
@@ -12,6 +13,11 @@ namespace Ticketing.Middlewares
             try
             {
                 await _next(context);
+            }
+            catch (ValidationException ex)
+            {
+                var errors = ex.Errors.Select(e => new { e.PropertyName, e.ErrorMessage });
+                await HandleException(context, StatusCodes.Status400BadRequest, "Error de validación de datos.", errors);
             }
             catch (KeyNotFoundException ex)
             {
@@ -31,11 +37,11 @@ namespace Ticketing.Middlewares
             }
             catch (Exception)
             {
-                await HandleException(context, 500, "Internal server error");
+                await HandleException(context, StatusCodes.Status500InternalServerError, "Error interno del servidor.");
             }
         }
 
-        private static async Task HandleException(HttpContext context, int statusCode, string message)
+        private static async Task HandleException(HttpContext context, int statusCode, string message, object details = null)
         {
             context.Response.StatusCode = statusCode;
             context.Response.ContentType = "application/json";
@@ -43,7 +49,8 @@ namespace Ticketing.Middlewares
             var response = new
             {
                 status = statusCode,
-                message
+                message,
+                details
             };
 
             await context.Response.WriteAsJsonAsync(response);

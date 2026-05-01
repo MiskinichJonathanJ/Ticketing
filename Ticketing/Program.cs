@@ -3,10 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Ticketing.Application.Interfaces;
 using Ticketing.Infrastructure.Data;
 using Ticketing.Infrastructure.Data.Repositories;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
+using Ticketing.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 
 builder.Services.AddValidatorsFromAssembly(typeof(IApplicationMarker).Assembly);
 builder.Services.AddControllers();
@@ -19,11 +20,6 @@ builder.Services.AddSwaggerGen(options =>
         Title = "Ticketing API",
         Version = "v1",
         Description = "API profesional para la gestión y reserva de asientos.",
-        Contact = new OpenApiContact
-        {
-            Name = "Soporte Técnico",
-            Email = "soporte@ticketing.com"
-        }
     });
 
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -41,7 +37,10 @@ builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 builder.Services.AddScoped<ISeatRepository, SeatRepository>();
+builder.Services.AddScoped<ISectorRepository, SectorRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddDbContext<TicketingDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -72,9 +71,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
+app.UseMiddleware<ExceptionMiddleware>();
 app.MapControllers();
 
 app.Run();
