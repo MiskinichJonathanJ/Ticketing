@@ -2,6 +2,7 @@
 {
     public class ReservationDto
     {
+        public Guid Id { get; set; }
         public Guid ReservationId { get; set; }
         public Guid SeatId { get; set; }
         public string Status { get; set; } = null!;
