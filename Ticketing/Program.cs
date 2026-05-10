@@ -94,6 +94,7 @@ if (!app.Environment.IsProduction())
 }
 app.UseCors("FrontendPolicy");
 app.UseAuthorization();
+app.UseMiddleware<ApiVersionMiddleware>();
 app.UseMiddleware<ExceptionMiddleware>();
 app.MapControllers();
 

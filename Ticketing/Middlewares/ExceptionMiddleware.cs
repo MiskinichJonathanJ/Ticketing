@@ -4,9 +4,10 @@ using FluentValidation;
 
 namespace Ticketing.Middlewares
 {
-    public class ExceptionMiddleware(RequestDelegate next)
+    public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
     {
         private readonly RequestDelegate _next = next;
+        private readonly ILogger<ExceptionMiddleware> _logger = logger;
 
         public async Task InvokeAsync(HttpContext context)
         {
@@ -16,28 +17,52 @@ namespace Ticketing.Middlewares
             }
             catch (ValidationException ex)
             {
+                _logger.LogWarning("[CODE-ERROR] - VAL-001: Error de validación en {Path}: {Message}",
+                    context.Request.Path, ex.Message);
+
                 var errors = ex.Errors.Select(e => new { e.PropertyName, e.ErrorMessage });
-                await HandleException(context, StatusCodes.Status400BadRequest, "Error de validación de datos.", errors);
+                await HandleException(context, StatusCodes.Status400BadRequest,
+                    "[CODE-ERROR] - VAL-001: Error de validación de datos.", errors);
             }
             catch (KeyNotFoundException ex)
             {
-                await HandleException(context, 404, ex.Message);
+                _logger.LogWarning("[CODE-ERROR] - NOT-002: Recurso no encontrado en {Path}: {Message}",
+                    context.Request.Path, ex.Message);
+
+                await HandleException(context, 404,
+                    $"[CODE-ERROR] - NOT-002: {ex.Message}");
             }
             catch (InvalidOperationException ex)
             {
-                await HandleException(context, 409, ex.Message);
+                _logger.LogWarning("[CODE-ERROR] - OPS-003: Operación inválida en {Path}: {Message}",
+                    context.Request.Path, ex.Message);
+
+                await HandleException(context, 409,
+                    $"[CODE-ERROR] - OPS-003: {ex.Message}");
             }
             catch (DBConcurrencyException ex)
             {
-                await HandleException(context, 409, ex.Message);
+                _logger.LogWarning("[CODE-ERROR] - CON-004: Conflicto de concurrencia DB en {Path}: {Message}",
+                    context.Request.Path, ex.Message);
+
+                await HandleException(context, 409,
+                    $"[CODE-ERROR] - CON-004: {ex.Message}");
             }
             catch (ConcurrencyConflictException ex)
             {
-                await HandleException(context, 409, ex.Message);
+                _logger.LogWarning("[CODE-ERROR] - CON-005: Conflicto de concurrencia en {Path}: {Message}",
+                    context.Request.Path, ex.Message);
+
+                await HandleException(context, 409,
+                    $"[CODE-ERROR] - CON-005: {ex.Message}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                await HandleException(context, StatusCodes.Status500InternalServerError, "Error interno del servidor.");
+                _logger.LogError(ex, "[CODE-ERROR] - SRV-500: Error interno no controlado en {Path}",
+                    context.Request.Path);
+
+                await HandleException(context, StatusCodes.Status500InternalServerError,
+                    "[CODE-ERROR] - SRV-500: Error interno del servidor.");
             }
         }
 
