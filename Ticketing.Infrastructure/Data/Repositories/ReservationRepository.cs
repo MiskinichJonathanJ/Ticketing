@@ -21,5 +21,17 @@ namespace Ticketing.Infrastructure.Data.Repositories
                         && r.Status == ReservationStatus.Pending
                         && r.ExpireAt > DateTime.UtcNow);
         }
+
+        public async Task<Reservation?> GetByIdAsync(Guid reservationId)
+        {
+            return await _context.RESERVATION
+                .Include(r => r.Seat)
+                .FirstOrDefaultAsync(r => r.Id == reservationId);
+        }
+
+        public void Update(Reservation reservation)
+        {
+            _context.RESERVATION.Update(reservation);
+        }
     }
 }
