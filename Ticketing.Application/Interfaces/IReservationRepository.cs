@@ -7,7 +7,7 @@ namespace Ticketing.Application.Interfaces
         Task AddAsync(Reservation reservation);
         Task<bool> ExistsActiveReservation(Guid seatId);
 
-        Task<Reservation> GetByIdAsync(Guid reservationId);
+        Task<Reservation?> GetByIdAsync(Guid reservationId);
         void Update(Reservation reservation);
     }
 }
