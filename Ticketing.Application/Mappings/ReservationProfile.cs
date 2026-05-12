@@ -6,7 +6,12 @@ namespace Ticketing.Application.Mappings
     {
         public ReservationProfile()
         {
-            CreateMap<Domain.Entities.Reservation, DTOs.ReservationDto>();
+            CreateMap<Domain.Entities.Reservation, DTOs.ReservationDto>()
+            .ForMember(dest => dest.ExpiresAt, opt => opt.MapFrom(src => src.ExpireAt))
+            .ForMember(dest => dest.ReservationId, opt => opt.MapFrom(src => src.Id));
+
+
+
         }
     }
 }
