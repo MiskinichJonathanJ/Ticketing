@@ -20,13 +20,19 @@ public class UnitOfWork(TicketingDbContext context) : IUnitOfWork
         {
             await _context.SaveChangesAsync(cancellationToken);
             if (_transaction != null)
-            {
                 await _transaction.CommitAsync(cancellationToken);
-            }
         }
         catch (DbUpdateConcurrencyException ex)
         {
-            throw new ConcurrencyConflictException("El asiento ya ha sido modificado por otro proceso.", ex);
+            throw new ConcurrencyConflictException(
+                "El asiento fue modificado por otro usuario.", ex);
+        }
+        catch (DbUpdateException ex)
+            when(ex.InnerException?.Message.Contains("duplicate key") == true ||
+                  ex.InnerException?.Message.Contains("IX_RESERVATION_SeatId") == true)
+        {
+            throw new ConcurrencyConflictException(
+                "El asiento ya fue reservado por otro usuario.", ex);
         }
     }
 
