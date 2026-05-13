@@ -5,5 +5,6 @@ namespace Ticketing.Application.Interfaces
     public interface IAuditLogRepository
     {
         Task AddAuditLogAsync(AuditLog log);
+        Task EnqueueAuditLogAsync(AuditLog log);
     }
 }
