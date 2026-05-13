@@ -36,7 +36,6 @@ namespace Ticketing.Application.UseCases.Reservation.Commands.ReserveSeat
 
         public async Task<ReservationDto> Handle(ReserveSeatCommand request, CancellationToken cancellationToken)
         {
-            // 1. Validación de entrada
             var validationResult = await _validator.ValidateAsync(request, cancellationToken);
             if (!validationResult.IsValid)
                 throw new ValidationException(validationResult.Errors);
@@ -68,7 +67,7 @@ namespace Ticketing.Application.UseCases.Reservation.Commands.ReserveSeat
                 ExpireAt = DateTime.UtcNow.AddMinutes(5)
             };
 
-            // 5. Abrir transacción e intentar persistir
+            // Abrir transacción e intentar persistir
             await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
             try
