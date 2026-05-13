@@ -36,25 +36,27 @@ namespace Ticketing.Application.UseCases.Reservation.Commands.ReserveSeat
 
         public async Task<ReservationDto> Handle(ReserveSeatCommand request, CancellationToken cancellationToken)
         {
+            // 1. Validación de entrada
             var validationResult = await _validator.ValidateAsync(request, cancellationToken);
-
             if (!validationResult.IsValid)
                 throw new ValidationException(validationResult.Errors);
 
-            await _unitOfWork.BeginTransactionAsync(cancellationToken);
             var seat = await _seatRepository.GetByIdAsync(request.SeatId);
 
             if (seat == null)
             {
-                await LogAudit(request, "RESERVE_SEAT_FAILED_NOT_FOUND", cancellationToken);
-                throw new Exception("Seat not found"); 
+                await LogAuditOutsideTransaction(request, "RESERVE_SEAT_FAILED_NOT_FOUND", cancellationToken);
+                throw new KeyNotFoundException($"Asiento {request.SeatId} no encontrado.");
             }
 
             if (seat.Status != SeatStatus.Available)
             {
-                await LogAudit(request, "RESERVE_FAILED_NOT_AVAILABLE", cancellationToken);
-                throw new InvalidOperationException("Seat is not available");
+                await LogAuditOutsideTransaction(request, "RESERVE_FAILED_NOT_AVAILABLE", cancellationToken);
+                throw new InvalidOperationException("El asiento no está disponible.");
             }
+
+            seat.Status = SeatStatus.Reserved;
+            seat.Version++;
 
             var reservation = new Domain.Entities.Reservation
             {
@@ -66,55 +68,61 @@ namespace Ticketing.Application.UseCases.Reservation.Commands.ReserveSeat
                 ExpireAt = DateTime.UtcNow.AddMinutes(5)
             };
 
-            seat.Status = SeatStatus.Reserved;
+            // 5. Abrir transacción e intentar persistir
+            await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
             try
             {
                 _seatRepository.Update(seat);
                 await _reservationRepository.AddAsync(reservation);
 
-                await _auditLogRepository.AddAuditLogAsync(new AuditLog
+                await _auditLogRepository.EnqueueAuditLogAsync(new AuditLog
                 {
                     Id = Guid.NewGuid(),
                     UserId = request.UserId,
                     Action = "RESERVE_SUCCESS",
                     EntityType = "Seat",
                     EntityId = seat.Id.ToString(),
-                    Details = $"Seat {seat.SeatNumber} reserved",
+                    Details = $"Asiento {seat.SeatNumber} reservado. Version anterior={seat.Version - 1}, nueva={seat.Version}",
                     CreatedAt = DateTime.UtcNow
                 });
-
+        
                 await _unitOfWork.CommitAsync(cancellationToken);
+
+                return _mapper.Map<ReservationDto>(reservation);
             }
             catch (ConcurrencyConflictException)
             {
                 await _unitOfWork.RollbackAsync(cancellationToken);
-                await LogAudit(request, "RESERVE_FAILED_CONCURRENCY", cancellationToken);
-                throw; 
+                await LogAuditOutsideTransaction(request, "RESERVE_FAILED_CONCURRENCY", cancellationToken);
+                throw; // ExceptionMiddleware → 409
             }
             catch (Exception)
             {
                 await _unitOfWork.RollbackAsync(cancellationToken);
                 throw;
             }
-
-            return _mapper.Map<ReservationDto>(reservation);
         }
 
-        private async Task LogAudit(ReserveSeatCommand request, string action, CancellationToken cancellationToken)
+        private async Task LogAuditOutsideTransaction(ReserveSeatCommand request, string action, CancellationToken cancellationToken)
         {
-            var auditLog = new AuditLog
+            try
             {
-                Id = Guid.NewGuid(),
-                UserId = request.UserId,
-                Action = action,
-                EntityType = "Seat",
-                EntityId = request.SeatId.ToString(),
-                Details = $"Attempt on seat {request.SeatId}",
-                CreatedAt = DateTime.UtcNow
-            };
-
-            await _auditLogRepository.AddAuditLogAsync(auditLog);
+                await _auditLogRepository.AddAuditLogAsync(new AuditLog
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = request.UserId,
+                    Action = action,
+                    EntityType = "Seat",
+                    EntityId = request.SeatId.ToString(),
+                    Details = $"Intento sobre asiento {request.SeatId} — acción: {action}",
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+            catch
+            {
+                // El log nunca debe romper el flujo principal
+            }
         }
     }
 }
