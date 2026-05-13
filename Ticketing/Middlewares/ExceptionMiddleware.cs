@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using Ticketing.Domain.Exceptions;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ticketing.Middlewares
 {
@@ -55,6 +56,13 @@ namespace Ticketing.Middlewares
 
                 await HandleException(context, 409,
                     $"[CODE-ERROR] - CON-005: {ex.Message}");
+            }
+            catch (DbUpdateConcurrencyException ex) 
+            { 
+                _logger.LogWarning("[CODE-ERROR] - CON-006: Conflicto de concurrencia EF Core en {Path}: {Message}",
+                    context.Request.Path, ex.Message);
+                await HandleException(context, 409,
+                    $"[CODE-ERROR] - CON-006: Conflicto de concurrencia en la base de datos.");
             }
             catch (Exception ex)
             {
