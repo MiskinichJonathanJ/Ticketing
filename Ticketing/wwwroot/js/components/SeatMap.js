@@ -78,10 +78,10 @@ function buildGrid(container, seats, sector) {
     container.innerHTML = '';
 
     Object.entries(rows).forEach(([rowId, rowSeats]) => {
+
         const rowWrapper = document.createElement('div');
         rowWrapper.className = 'row-wrapper';
 
-        // letra fila (A, B, C...)
         const label = document.createElement('div');
         label.className = 'row-label';
         label.textContent = rowId;
@@ -93,26 +93,6 @@ function buildGrid(container, seats, sector) {
             .sort((a, b) => a.seatNumber - b.seatNumber)
             .forEach((seat, index) => {
 
-                document.getElementById('btn-cancel').addEventListener('click', () => {
-                    // Deselecciona la butaca visualmente
-                    document.querySelectorAll('.seat-btn:not(:disabled)').forEach(b => {
-                        b.innerHTML = seatSVG('#1d4ed8');
-                    });
-
-                    // Para el timer si está corriendo
-                    stopReservationTimer();
-
-                    // Resetea el panel
-                    const panelSeat = document.getElementById('panel-seat');
-                    if (panelSeat) panelSeat.style.color = '';
-
-                    const btn = document.getElementById('btn-reserve');
-                    if (btn) btn.textContent = 'Reservar ahora';
-
-                    selectedSeatId = null;
-                    currentSeatData = null;
-                    updatePanel();
-                });
                 if (index === Math.floor(rowSeats.length / 2)) {
                     const aisle = document.createElement('div');
                     aisle.className = 'aisle';
@@ -126,9 +106,11 @@ function buildGrid(container, seats, sector) {
                 if (seat.status === "AVAILABLE") {
                     btn.classList.add('available');
                     btn.onclick = () => onSeatClick(btn, seat, sector);
+
                 } else if (seat.status === "RESERVED") {
                     btn.classList.add('reserved');
                     btn.disabled = true;
+
                 } else {
                     btn.classList.add('occupied');
                     btn.disabled = true;
@@ -139,10 +121,10 @@ function buildGrid(container, seats, sector) {
 
         rowWrapper.appendChild(label);
         rowWrapper.appendChild(seatsRow);
+
         container.appendChild(rowWrapper);
     });
 }
-
 
 
 function onSeatClick(btn, seat, sector) {

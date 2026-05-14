@@ -1,4 +1,4 @@
-﻿import { BASE_URL } from './constants.js';
+﻿import { BASE_URL, SEAT_STATUS } from './constants.js';
 
 // ══════════════════════════════════════════════
 // MODO MOCK — datos falsos hasta que el back esté listo
@@ -6,14 +6,15 @@
 const USE_MOCK = true;
 // ══════════════════════════════════════════════
 
-// Genera 50 butacas por sector con algunos estados variados
 function generateSeats(sectorName, sectorId) {
     const seats = [];
     for (let i = 1; i <= 50; i++) {
         const row = `F${Math.ceil(i / 10)}`;
-        let status = 'Available';
-        if ([3, 15, 27, 38, 44].includes(i)) status = 'Reserved';
-        if ([7, 19, 31, 42, 48].includes(i)) status = 'Sold';
+        let status = SEAT_STATUS.AVAILABLE;
+        if ([3, 15, 27, 38, 44].includes(i))
+            status = SEAT_STATUS.RESERVED;
+        if ([7, 19, 31, 42, 48].includes(i))
+            status = SEAT_STATUS.SOLD;
         seats.push({
             id: `${sectorId}-seat-${i}`,
             sectorName,
@@ -45,6 +46,7 @@ const MOCK_DATA = {
         ...generateSeats("Platea", 2)
     ]
 };
+
 
 // ── API Config ──────────────────────────────────────────────
 
