@@ -91,3 +91,33 @@ export function truncate(text, maxLength) {
         ? text.slice(0, maxLength) + '…'
         : text;
 }
+
+export function showReservationModal() {
+    const modal = document.getElementById('reservation-modal');
+
+    if (modal) {
+        modal.classList.remove('hidden');
+    }
+}
+
+export function closeReservationModal() {
+    const modal = document.getElementById('reservation-modal');
+    modal.classList.add('hidden');
+}
+
+export function initializeModal() {
+    const modal = document.getElementById('reservation-modal');
+    const closeBtn = document.getElementById('modal-close-btn');
+
+    if (!modal || !closeBtn) return;
+
+    closeBtn.addEventListener('click', () => {
+        modal.classList.add('hidden');
+    });
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.add('hidden');
+        }
+    });
+}

@@ -43,7 +43,7 @@
                         <div class="stage-txt">ESCENARIO</div>
                     </div>
 
-                    <<div class="map-inner">
+                    <div class="map-inner">
                         <div class="grid-rows" id="seat-grid">
                             <p class="no-data">Seleccioná un sector para ver las butacas</p>
                         </div>
@@ -83,14 +83,29 @@
                     </div>
                     <hr class="pdivider">
                     <button class="btn-reserve" id="btn-reserve" disabled>Reservar ahora</button>
-                    
+
                     <div id="reservation-timer"></div>
                     <button class="btn-cancel" id="btn-cancel">Cancelar selección</button>
                 </div>
             </div>
         </div>
     </div>
+    <div id="reservation-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div class="modal-icon">⏳</div>
 
+            <h2 class="modal-title">Reserva realizada</h2>
+
+            <p class="modal-text">
+                Tu asiento fue reservado correctamente.
+                Tenés <strong>5 minutos</strong> para completar el pago.
+            </p>
+
+            <button id="modal-close-btn" class="modal-btn">
+                Entendido
+            </button>
+        </div>
+    </div>
     <script type="module" src="js/main.js"></script>
 </body>
 </html>

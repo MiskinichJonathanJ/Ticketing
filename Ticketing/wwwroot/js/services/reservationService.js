@@ -2,7 +2,7 @@ import { reserveSeat } from '../config/api.js';
 import { appStore } from '../appStore.js';
 import { showSuccess, showError, showWarning } from '../utils/helpers.js';
 import { MESSAGES } from '../config/constants.js';
-
+import { showReservationModal } from '../utils/helpers.js';
 
 export async function tryReserveSeat(seatId) {
     const user = appStore.getState('currentUser');
@@ -16,6 +16,7 @@ export async function tryReserveSeat(seatId) {
         appStore.setState('currentReservation', reservation);
 
         showSuccess(MESSAGES.RESERVE_SUCCESS);
+
         return reservation;
 
     } catch (error) {

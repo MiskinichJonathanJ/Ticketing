@@ -2,6 +2,7 @@
 import { appStore } from './appStore.js';
 import { formatDate, formatPrice, escapeHtml } from './utils/helpers.js';
 import { MESSAGES, SEAT_STATUS, DEFAULT_USER_ID, RESERVATION_TIMEOUT } from './config/constants.js';
+import { initializeModal, showReservationModal } from './utils/helpers.js';
 
 // ── SVG silla ────────────────────────────────────────────────
 function seatSVG(color) {
@@ -403,6 +404,7 @@ document.getElementById('btn-reserve').addEventListener('click', async () => {
         if (seat) seat.status = 'Reserved';
 
         showAlert('✅ ¡Butaca reservada! Tenés 5 minutos para completar el pago.', 'success');
+        showReservationModal();
 
         // Guarda la info de la reserva para mostrarla en el panel
         const reservedSeat = currentSeatData;
@@ -502,3 +504,6 @@ function stopPolling() {
 
 // ── Init ──────────────────────────────────────────────────────
 loadEvents();
+
+// ── Init MODAL ──────────────────────────────────────────────────────
+initializeModal();
