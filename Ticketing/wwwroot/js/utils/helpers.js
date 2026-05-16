@@ -11,7 +11,7 @@ function getOrCreateAlertContainer() {
     return container;
 }
 
-function showAlert(message, type) {
+export function showAlert(message, type) {
     const container = getOrCreateAlertContainer();
     const alert = document.createElement('div');
     alert.className = `alert alert-${type}`;
