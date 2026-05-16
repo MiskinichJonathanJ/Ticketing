@@ -1,15 +1,11 @@
 ﻿import { getEvents } from '../config/api.js';
 import { appStore } from '../appStore.js';
-import { showError, formatDate, escapeHtml } from '../utils/helpers.js';
-import { MESSAGES, SELECTORS } from '../config/constants.js';
-import { renderSectorList } from './SectorList.js';
-import { renderSeatMap } from './SeatMap.js';
+import { formatDate, escapeHtml, showAlert } from '../utils/helpers.js';
+import { MESSAGES } from '../config/constants.js';
 
-
-export async function renderEventList() {
-    const container = document.getElementById(SELECTORS.EVENTS_CONTAINER);
-    if (!container) return;
-
+// ── Renderiza la lista de eventos ─────────────────────────────
+export async function loadEvents() {
+    const container = document.getElementById('events-container');
     container.innerHTML = '<div class="spinner"></div>';
 
     try {
@@ -26,7 +22,7 @@ export async function renderEventList() {
                 <div>
                     <div class="event-name">${escapeHtml(event.name)}</div>
                     <div class="event-meta">
-                        📅 ${formatDate(event.eventDate)} · 📍 ${escapeHtml(event.venue)}
+                        ${formatDate(event.eventDate)} ${escapeHtml(event.venue)}
                     </div>
                     <span class="badge-active">${escapeHtml(event.status)}</span>
                 </div>
@@ -37,16 +33,24 @@ export async function renderEventList() {
         `).join('');
 
     } catch (error) {
-        showError(MESSAGES.LOAD_EVENTS_ERROR);
+        showAlert(MESSAGES.LOAD_EVENTS_ERROR, 'error');
         container.innerHTML = `<p class="error-msg">${MESSAGES.LOAD_EVENTS_ERROR}</p>`;
     }
 }
 
-export function selectEvent(eventId) {
+// ── Selecciona un evento ──────────────────────────────────────
+export async function selectEvent(eventId, onEventSelected) {
     const events = appStore.getState('events');
     const event = events.find(e => e.id === eventId);
     if (!event) return;
 
     appStore.setState('currentEvent', event);
-    document.dispatchEvent(new CustomEvent('eventSelected', { detail: event }));
+
+    document.getElementById('event-bar').innerHTML = `
+        <div><div class="bi-label">Evento</div><div class="bi-value">${escapeHtml(event.name)}</div></div>
+        <div><div class="bi-label">Fecha</div><div class="bi-value">${formatDate(event.eventDate)}</div></div>
+        <div><div class="bi-label">Lugar</div><div class="bi-value">${escapeHtml(event.venue)}</div></div>
+    `;
+
+    onEventSelected(eventId);
 }
