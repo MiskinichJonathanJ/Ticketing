@@ -106,6 +106,81 @@
             </button>
         </div>
     </div>
+    <!-- Sección Pagos -->
+    <div class="section" id="section-payment">
+        <div class="event-bar" id="payment-event-bar"></div>
+        <div class="payment-content">
+            <button class="back-btn" id="btn-back-payment">← Volver al mapa</button>
+
+            <div class="payment-layout">
+                <!-- Columna izquierda -->
+                <div class="payment-left">
+                    <h2 class="pg-title">Confirmá tu compra</h2>
+                    <p class="pg-sub">Completá el pago antes de que expire tu reserva</p>
+
+                    <!-- Timer -->
+                    <div class="timer-card" id="payment-timer-card">
+                        <div class="timer-info">
+                            <div class="timer-icon">⏱</div>
+                            <div>
+                                <div class="timer-label">Tu reserva expira en</div>
+                                <div class="timer-sub">El asiento se liberará automáticamente</div>
+                            </div>
+                        </div>
+                        <div class="timer-count" id="payment-timer">05:00</div>
+                    </div>
+
+                    <!-- Método de pago -->
+                    <div class="payment-card">
+                        <div class="payment-card-title">Método de pago</div>
+                        <span class="sim-label">Pago simulado</span>
+                        <div class="sim-row">
+                            <div class="sim-icon">💳</div>
+                            <div class="sim-info">
+                                <strong>Tarjeta de crédito</strong><br>
+                                **** **** **** 4242
+                            </div>
+                        </div>
+                        <hr class="pdivider" style="margin: 12px 0">
+                        <button class="btn-pay" id="btn-pay">
+                            Confirmar pago
+                        </button>
+                        <button class="btn-cancel-payment" id="btn-cancel-payment">
+                            Cancelar y volver al mapa
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Columna derecha — resumen -->
+                <div class="payment-summary">
+                    <div class="summary-card">
+                        <div class="payment-card-title">Resumen de compra</div>
+                        <div class="summary-row-item">
+                            <span class="summary-label">Evento</span>
+                            <span class="summary-value" id="pay-event-name">-</span>
+                        </div>
+                        <div class="summary-row-item">
+                            <span class="summary-label">Sector</span>
+                            <span class="summary-value" id="pay-sector-name">-</span>
+                        </div>
+                        <div class="summary-row-item">
+                            <span class="summary-label">Butaca</span>
+                            <span class="summary-badge" id="pay-seat-info">-</span>
+                        </div>
+                        <div class="summary-row-item">
+                            <span class="summary-label">Precio unitario</span>
+                            <span class="summary-value" id="pay-price">-</span>
+                        </div>
+                        <hr class="pdivider" style="margin: 12px 0">
+                        <div class="summary-row-total">
+                            <span>Total</span>
+                            <span id="pay-total">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script type="module" src="js/main.js"></script>
 </body>
 </html>
