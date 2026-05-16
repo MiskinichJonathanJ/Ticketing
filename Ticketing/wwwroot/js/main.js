@@ -1,17 +1,15 @@
-﻿import { getEvents, getSectors, getSeats, reserveSeat } from './config/api.js';
-import { appStore } from './appStore.js';
+﻿import {  reserveSeat } from './config/api.js';
 import { showAlert, initializeModal, showReservationModal, closeReservationModal } from './utils/helpers.js';
 import { MESSAGES, DEFAULT_USER_ID } from './config/constants.js';
 import { loadEvents, selectEvent } from './components/EventList.js';
 import { loadSectors, selectSector } from './components/SectorList.js';
 import {
     loadSeatMap, seatSVG, startPolling, stopPolling,
-    startReservationTimer, stopReservationTimer,
-    updatePanel, updatePanelReservation,
+    stopReservationTimer, updatePanelReservation,
     handleCancelReservation, getReserveData,
     setReservedSeat, updateSeatStatus
 } from './components/SeatMap.js';
-import { showPaymentSection, stopPaymentTimer, initPaymentSection } from './components/PaymentSection.js';
+import { showPaymentSection, initPaymentSection } from './components/PaymentSection.js';
 
 // ── Helpers UI ────────────────────────────────────────────────
 function showSection(id) {
