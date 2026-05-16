@@ -159,3 +159,20 @@ export async function reserveSeat(seatId, userId) {
         body: JSON.stringify({ seatId, userId })
     });
 }
+
+// POST /api/v1/payments
+export async function processPayment(reservationId, userId) {
+    if (USE_MOCK) {
+        return {
+            reservationId,
+            seatStatus: 'Sold',
+            reservationStatus: 'Paid',
+            paidAt: new Date().toISOString(),
+            message: 'Pago procesado exitosamente'
+        };
+    }
+    return apiRequest(buildApiUrl('/payments'), {
+        method: 'POST',
+        body: JSON.stringify({ reservationId, userId })
+    });
+}
