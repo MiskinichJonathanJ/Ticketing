@@ -1,8 +1,8 @@
 ﻿import { getEvents, getSectors, getSeats, reserveSeat } from './config/api.js';
 import { appStore } from './appStore.js';
-import { formatDate, formatPrice, escapeHtml } from './utils/helpers.js';
 import { MESSAGES, SEAT_STATUS, DEFAULT_USER_ID, RESERVATION_TIMEOUT } from './config/constants.js';
-import { initializeModal, showReservationModal } from './utils/helpers.js';
+import { formatDate, formatPrice, escapeHtml, showAlert, initializeModal, showReservationModal, closeReservationModal } from './utils/helpers.js';
+import { showPaymentSection, stopPaymentTimer, initPaymentSection } from './components/PaymentSection.js';
 
 // ── SVG silla ────────────────────────────────────────────────
 function seatSVG(color) {
@@ -28,12 +28,6 @@ function showSection(id) {
     document.getElementById(id).classList.add('active');
 }
 
-function showAlert(msg, type) {
-    const el = document.getElementById('alert-global');
-    el.className = 'alert ' + type;
-    el.textContent = msg;
-    setTimeout(() => { el.className = 'alert'; el.textContent = ''; }, 4000);
-}
 
 // ── Estado ───────────────────────────────────────────────────
 let selectedSeatId = null;
@@ -323,6 +317,24 @@ window.selectSector = async function (sectorId) {
     await loadSeatMap(sector, true);
 };
 
+
+// ── Init pagos ────────────────────────────────────────────────
+initPaymentSection(
+    // onPaymentSuccess → volvemos a eventos
+    () => {
+        stopPolling();
+        allSeats = [];
+        showSection('section-events');
+        loadEvents();
+    },
+    // onCancel → volvemos al mapa
+    () => {
+        showSection('section-seats');
+    }
+);
+
+
+
 // ── Eventos ───────────────────────────────────────────────────
 async function loadEvents() {
     const container = document.getElementById('events-container');
@@ -385,37 +397,43 @@ document.getElementById('btn-reserve').addEventListener('click', async () => {
     btn.disabled = true;
     btn.textContent = 'Reservando...';
 
-    // Guarda referencia al botón de la butaca
     const seatBtn = document.querySelector(`[data-seat-id="${selectedSeatId}"]`);
     const seatIdToReserve = selectedSeatId;
-    currentReservedSeatId = selectedSeatId; //  guardamos para el cancel
+    currentReservedSeatId = selectedSeatId;
 
     try {
-        await reserveSeat(selectedSeatId, DEFAULT_USER_ID);
+        // ← guardamos la respuesta de la API
+        const reservation = await reserveSeat(selectedSeatId, DEFAULT_USER_ID);
 
-        // Butaca pasa a amarillo (reserva)
+        // Butaca pasa a amarillo
         if (seatBtn) {
             seatBtn.innerHTML = seatSVG('#f59e0b');
             seatBtn.disabled = true;
         }
 
-        // Actualiza estado local
+        // Actualizamos estado local
         const seat = allSeats.find(s => s.id === seatIdToReserve);
         if (seat) seat.status = 'Reserved';
 
-        showAlert('✅ ¡Butaca reservada! Tenés 5 minutos para completar el pago.', 'success');
-        showReservationModal();
-
-        // Guarda la info de la reserva para mostrarla en el panel
+        // Guardamos datos antes de limpiar
         const reservedSeat = currentSeatData;
+        const reservedSector = currentSector;
+
         selectedSeatId = null;
         currentSeatData = null;
 
-        // Mostrar reserva activa en el panel
         updatePanelReservation(reservedSeat);
 
-        // Inicia timer de expiración
-        startReservationTimer(seatIdToReserve, seatBtn, reservedSeat);
+        // Primero cargamos la sección de pagos en el fondo
+        showPaymentSection(reservation, reservedSeat, reservedSector);
+
+        // Después mostramos el modal encima
+        showReservationModal();
+
+        // Al cerrar el modal ya está la sección de pagos lista
+        document.getElementById('modal-close-btn').onclick = () => {
+            closeReservationModal();
+        };
 
     } catch (error) {
         if (error.status === 409) {
