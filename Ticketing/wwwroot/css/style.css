@@ -574,8 +574,9 @@ body {
 }
 
 .modal-icon {
-    font-size: 42px;
+    font-size: 45px;
     margin-bottom: 10px;
+    color: #1e40af;
 }
 
 .modal-title {
