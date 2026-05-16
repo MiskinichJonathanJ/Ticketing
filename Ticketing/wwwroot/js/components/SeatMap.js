@@ -98,7 +98,9 @@ export function startPolling() {
                 const freshSeats = await getSeats(event.id, sectorToRefresh.id);
                 if (currentSector && currentSector.id === sectorToRefresh.id) {
                     allSeats = freshSeats;
-                    buildGrid(document.getElementById('seat-grid'), allSeats);
+                    // Filtramos por sector antes de redibujar
+                    const seats = freshSeats.filter(s => s.sectorName === sectorToRefresh.name);
+                    buildGrid(document.getElementById('seat-grid'), seats);
                 }
             } catch (error) {
                 console.error('Error en polling:', error);
