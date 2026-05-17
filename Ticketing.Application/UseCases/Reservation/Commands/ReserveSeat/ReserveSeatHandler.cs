@@ -5,6 +5,7 @@ using Ticketing.Application.DTOs;
 using Ticketing.Application.Interfaces;
 using Ticketing.Domain.Entities;
 using Ticketing.Domain.Enums;
+using System.Text.Json;
 using Ticketing.Domain.Exceptions;
 
 namespace Ticketing.Application.UseCases.Reservation.Commands.ReserveSeat
@@ -36,21 +37,35 @@ namespace Ticketing.Application.UseCases.Reservation.Commands.ReserveSeat
 
         public async Task<ReservationDto> Handle(ReserveSeatCommand request, CancellationToken cancellationToken)
         {
+            // Log de intento de reserva al inicio
+            await LogAuditOutsideTransaction(request, "RESERVE_ATTEMPT", cancellationToken, new {
+                request.SeatId,
+                request.UserId,
+                InitialStatus = "Attempting to reserve"
+            });
+
             var validationResult = await _validator.ValidateAsync(request, cancellationToken);
             if (!validationResult.IsValid)
+            {
+                await LogAuditOutsideTransaction(request, "RESERVE_VALIDATION_FAILED", cancellationToken, new {
+                    request.SeatId,
+                    request.UserId,
+                    Errors = validationResult.Errors.Select(e => new { e.PropertyName, e.ErrorMessage })
+                });
                 throw new ValidationException(validationResult.Errors);
+            }
 
             var seat = await _seatRepository.GetByIdAsync(request.SeatId);
 
             if (seat == null)
             {
-                await LogAuditOutsideTransaction(request, "RESERVE_SEAT_FAILED_NOT_FOUND", cancellationToken);
+                await LogAuditOutsideTransaction(request, "RESERVE_SEAT_FAILED_NOT_FOUND", cancellationToken, new { request.SeatId, request.UserId });
                 throw new KeyNotFoundException($"Asiento {request.SeatId} no encontrado.");
             }
 
             if (seat.Status != SeatStatus.Available)
             {
-                await LogAuditOutsideTransaction(request, "RESERVE_FAILED_NOT_AVAILABLE", cancellationToken);
+                await LogAuditOutsideTransaction(request, "RESERVE_FAILED_NOT_AVAILABLE", cancellationToken, new { request.SeatId, request.UserId, CurrentSeatStatus = seat.Status.ToString() });
                 throw new InvalidOperationException("El asiento no está disponible.");
             }
 
@@ -82,7 +97,13 @@ namespace Ticketing.Application.UseCases.Reservation.Commands.ReserveSeat
                     Action = "RESERVE_SUCCESS",
                     EntityType = "Seat",
                     EntityId = seat.Id.ToString(),
-                    Details = $"Asiento {seat.SeatNumber} reservado. Version anterior={seat.Version - 1}, nueva={seat.Version}",
+                    Details = JsonSerializer.Serialize(new {
+                        SeatNumber = seat.SeatNumber,
+                        PreviousVersion = seat.Version - 1,
+                        NewVersion = seat.Version,
+                        ReservationId = reservation.Id,
+                        ExpiresAt = reservation.ExpireAt
+                    }),
                     CreatedAt = DateTime.UtcNow
                 });
         
@@ -93,7 +114,7 @@ namespace Ticketing.Application.UseCases.Reservation.Commands.ReserveSeat
             catch (ConcurrencyConflictException)
             {
                 await _unitOfWork.RollbackAsync(cancellationToken);
-                await LogAuditOutsideTransaction(request, "RESERVE_FAILED_CONCURRENCY", cancellationToken);
+                await LogAuditOutsideTransaction(request, "RESERVE_CONFLICT", cancellationToken, new { request.SeatId, request.UserId, ConflictReason = "Seat modified by another user" });
                 throw; // ExceptionMiddleware → 409
             }
             catch (Exception)
@@ -103,7 +124,7 @@ namespace Ticketing.Application.UseCases.Reservation.Commands.ReserveSeat
             }
         }
 
-        private async Task LogAuditOutsideTransaction(ReserveSeatCommand request, string action, CancellationToken cancellationToken)
+        private async Task LogAuditOutsideTransaction(ReserveSeatCommand request, string action, CancellationToken cancellationToken, object? details = null)
         {
             try
             {
@@ -114,7 +135,7 @@ namespace Ticketing.Application.UseCases.Reservation.Commands.ReserveSeat
                     Action = action,
                     EntityType = "Seat",
                     EntityId = request.SeatId.ToString(),
-                    Details = $"Intento sobre asiento {request.SeatId} — acción: {action}",
+                    Details = details != null ? JsonSerializer.Serialize(details) : $"Intento sobre asiento {request.SeatId} — acción: {action}",
                     CreatedAt = DateTime.UtcNow
                 });
             }
