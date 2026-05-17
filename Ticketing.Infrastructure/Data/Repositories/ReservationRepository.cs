@@ -33,5 +33,13 @@ namespace Ticketing.Infrastructure.Data.Repositories
         {
             _context.RESERVATION.Update(reservation);
         }
+
+        public async Task<IEnumerable<Reservation>> GetExpiredPendingReservationsAsync(DateTime now)
+        {
+            return await _context.RESERVATION
+                                 .Include(r => r.Seat)
+                                 .Where(r => r.Status == ReservationStatus.Pending && r.ExpireAt < now)
+                                 .ToListAsync();
+        }
     }
 }
