@@ -6,6 +6,7 @@ using Ticketing.Infrastructure.Data.Repositories;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using Ticketing.Middlewares;
+using Ticketing.Middlewares.BackgroundJobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,8 @@ builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 builder.Services.AddScoped<ISeatRepository, SeatRepository>();
 builder.Services.AddScoped<ISectorRepository, SectorRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddHostedService<ReservationTimeoutWorker>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

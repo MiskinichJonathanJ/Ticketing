@@ -77,11 +77,12 @@ namespace Ticketing.Infrastructure.Data
                 entity.Property(s => s.Version)
                     .IsConcurrencyToken();
 
-                // Relación con Reservation
-               entity.HasOne(s => s.Reservation)
-                    .WithOne(r => r.Seat)
-                   .HasForeignKey<Reservation>(r => r.SeatId)
-                   .OnDelete(DeleteBehavior.Cascade);
+                // Relación con Reservation: Cambiar de One-to-One a One-to-Many
+               entity.HasMany(s => s.Reservations) // Un asiento puede tener muchas reservas
+                     .WithOne(r => r.Seat) // Cada reserva tiene un asiento
+                     .HasForeignKey(r => r.SeatId) // SeatId es la FK en Reservation
+                     .IsRequired() // La FK es requerida
+                     .OnDelete(DeleteBehavior.Restrict); // Evitar borrado en cascada para reservas, es mejor gestionarlo manualmente si un asiento se elimina.
             });
 
             // Configuracion para User
@@ -118,6 +119,13 @@ namespace Ticketing.Infrastructure.Data
                 entity.Property(r => r.Status)
                     .IsRequired()
                     .HasColumnType("varchar(20)");
+
+                // Explicitly define the many-to-one relationship from Reservation to Seat
+                entity.HasOne(r => r.Seat)
+                      .WithMany(s => s.Reservations) // A reservation has one seat, a seat has many reservations
+                      .HasForeignKey(r => r.SeatId)
+                      .IsRequired()
+                      .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<AuditLog>(entity =>

@@ -18,7 +18,7 @@ namespace Ticketing.Domain.Entities
 
         public Sector Sector { get; set; } = null!;
 
-        public Reservation? Reservation { get; set; }
+        public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
 
 
     }

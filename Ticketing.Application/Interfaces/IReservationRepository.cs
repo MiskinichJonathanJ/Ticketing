@@ -6,5 +6,6 @@ namespace Ticketing.Application.Interfaces
     {
         Task AddAsync(Reservation reservation);
         Task<bool> ExistsActiveReservation(Guid seatId);
+        Task<IEnumerable<Reservation>> GetExpiredPendingReservationsAsync(DateTime now);
     }
 }
