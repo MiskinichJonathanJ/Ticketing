@@ -54,23 +54,29 @@ export function startReservationTimer(seatId, seatBtn) {
             clearInterval(reservationTimer);
             reservationTimer = null;
 
-            if (seatBtn) {
-                seatBtn.innerHTML = seatSVG('#1d4ed8');
-                seatBtn.disabled = false;
-                seatBtn.addEventListener('click', () => {
+            // ← buscamos el botón fresco en el DOM
+            const freshSeatBtn = document.querySelector(`[data-seat-id="${seatId}"]`);
+
+            if (freshSeatBtn) {
+                freshSeatBtn.innerHTML = seatSVG('#1d4ed8');
+                freshSeatBtn.disabled = false;
+                freshSeatBtn.addEventListener('click', () => {
                     const seat = allSeats.find(s => s.id === seatId);
-                    if (seat) onSeatClick(seatBtn, seat);
+                    if (seat) onSeatClick(freshSeatBtn, seat);
                 });
             }
 
             const seat = allSeats.find(s => s.id === seatId);
             if (seat) seat.status = 'Available';
 
-            showAlert('⏰ Tu reserva expiró. La butaca volvió a estar disponible.', 'error');
+            showAlert('Tu reserva ha expirado. La butaca ha vuelto a estar disponible.', 'error');
+
+            const timerEl = document.getElementById('reservation-timer');
             if (timerEl) timerEl.style.display = 'none';
 
             const panelSeat = document.getElementById('panel-seat');
             if (panelSeat) panelSeat.style.color = '';
+
             updatePanel();
         }
     }, 1000);
@@ -274,7 +280,7 @@ export async function loadSeatMap(sector, animate = true) {
 
             const seats = allSeats.filter(s => s.sectorName === sector.name);
 
-            if (allSeats.length === 0) {
+            if (seats.length === 0) {
                 container.innerHTML = '<p class="no-data">No hay butacas disponibles</p>';
                 return;
             }

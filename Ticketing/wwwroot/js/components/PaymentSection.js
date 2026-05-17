@@ -2,15 +2,18 @@
 import { formatDate, formatPrice, escapeHtml, showAlert } from '../utils/helpers.js';
 import { DEFAULT_USER_ID } from '../config/constants.js';
 import { tryProcessPayment } from '../services/paymentService.js';
+import { updateSeatStatus, seatSVG } from '../components/SeatMap.js';
 
 let paymentTimer = null;
 let currentReservationId = null;
 let currentSectorForPayment = null;
+let currentSeatId = null;
 
 // ── Renderiza la sección de pagos ─────────────────────────────
 export function showPaymentSection(reservation, seat, sector) {
     currentReservationId = reservation.id;
     currentSectorForPayment = sector;
+    currentSeatId = seat.id; 
 
     const event = appStore.getState('currentEvent');
 
@@ -82,10 +85,56 @@ function startPaymentTimer(secondsLeft) {
                 btnPay.textContent = 'Reserva expirada';
             }
 
-            // Volvemos al mapa después de 3 segundos
-            setTimeout(() => showSection('section-seats'), 3000);
+            setTimeout(() => {
+                showSection('section-seats');
+
+                // Butaca vuelve a azul
+                const seatBtn = document.querySelector(`[data-seat-id="${currentSeatId}"]`);
+                if (seatBtn) {
+                    seatBtn.innerHTML = seatSVG('#1d4ed8');
+                    seatBtn.disabled = false;
+                }
+
+                // Estado local → Available
+                updateSeatStatus(currentSeatId, 'Available');
+
+                // Panel reseteado
+                const panelSeat = document.getElementById('panel-seat');
+                if (panelSeat) {
+                    panelSeat.textContent = 'Ninguna';
+                    panelSeat.className = 'pempty';
+                    panelSeat.style.color = '';
+                }
+                const panelPrice = document.getElementById('panel-price');
+                if (panelPrice) panelPrice.style.display = 'none';
+                const sumCount = document.getElementById('sum-count');
+                if (sumCount) sumCount.textContent = '0 butacas';
+                const sumPrice = document.getElementById('sum-price');
+                if (sumPrice) sumPrice.textContent = '$0';
+                const sumTotal = document.getElementById('sum-total');
+                if (sumTotal) sumTotal.textContent = '$0';
+                const btnReserve = document.getElementById('btn-reserve');
+                if (btnReserve) {
+                    btnReserve.disabled = true;
+                    btnReserve.textContent = 'Reservar ahora';
+                }
+
+                // Timer card reseteado
+                const timerCard = document.getElementById('payment-timer-card');
+                if (timerCard) {
+                    timerCard.style.background = '';
+                    timerCard.style.borderColor = '';
+                }
+                const timerEl = document.getElementById('payment-timer');
+                if (timerEl) {
+                    timerEl.classList.remove('urgent');
+                    timerEl.textContent = '05:00';
+                }
+
+            }, 3000);
         }
-    }, 1000);
+        }
+    , 1000);
 }
 
 export function stopPaymentTimer() {
