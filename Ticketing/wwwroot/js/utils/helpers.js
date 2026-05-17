@@ -11,7 +11,7 @@ function getOrCreateAlertContainer() {
     return container;
 }
 
-function showAlert(message, type) {
+export function showAlert(message, type) {
     const container = getOrCreateAlertContainer();
     const alert = document.createElement('div');
     alert.className = `alert alert-${type}`;
@@ -90,4 +90,34 @@ export function truncate(text, maxLength) {
     return text.length > maxLength
         ? text.slice(0, maxLength) + '…'
         : text;
+}
+
+export function showReservationModal() {
+    const modal = document.getElementById('reservation-modal');
+
+    if (modal) {
+        modal.classList.remove('hidden');
+    }
+}
+
+export function closeReservationModal() {
+    const modal = document.getElementById('reservation-modal');
+    modal.classList.add('hidden');
+}
+
+export function initializeModal() {
+    const modal = document.getElementById('reservation-modal');
+    const closeBtn = document.getElementById('modal-close-btn');
+
+    if (!modal || !closeBtn) return;
+
+    closeBtn.addEventListener('click', () => {
+        modal.classList.add('hidden');
+    });
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.add('hidden');
+        }
+    });
 }
