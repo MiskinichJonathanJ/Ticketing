@@ -76,5 +76,10 @@ Una vez que la aplicación esté corriendo, puedes acceder a la interfaz de Swag
 ## ✅ Funcionalidades Principales
 - Listado de eventos.
 - Consulta de sectores y asientos por evento.
-- Reserva de asientos con validaciones concurrentes.
+- Reserva de asientos con validaciones concurrentes (Optimistic Locking).
+- Pago de reservas mediante simulación de pasarela.
+- Liberación automática de reservas expiradas (proceso en segundo plano).
 - Logs de auditoría automáticos.
+
+## ⚙️ Procesos en Segundo Plano
+El sistema incluye un `ReservationTimeoutWorker` que se ejecuta automáticamente como parte del servicio de la API. Este proceso verifica cada minuto si existen reservas activas con más de 5 minutos de antigüedad, liberando los asientos automáticamente para otros usuarios.
